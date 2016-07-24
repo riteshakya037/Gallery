@@ -76,7 +76,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     .diskCacheStrategy(DiskCacheStrategy.RESULT)
                     .into(((MyItemHolder) holder).imageViewBottom);
         ((MyItemHolder) holder).albumName.setText(Utils.getName(albumList.get(position)));
-        ((MyItemHolder) holder).albumSize.setText(String.format(Locale.US, "%d Photos", imageModels.size()));
+        ((MyItemHolder) holder).albumSize.setText(String.format(Locale.US, "%d %s", imageModels.size(), context.getResources().getString(R.string.photos)));
         Utils utils = new Utils(context);
         int proportionalHeight;
         if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)

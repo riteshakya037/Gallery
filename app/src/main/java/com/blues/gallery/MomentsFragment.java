@@ -1,5 +1,7 @@
 package com.blues.gallery;
 
+import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -20,22 +22,21 @@ public class MomentsFragment extends Fragment {
     GalleryAdapter mAdapter;
     RecyclerView mRecyclerView;
     public static HashMap<String, ArrayList<ImageModel>> IMGS;
-    private static final String ARG_ALBUM_NAME = "album_name";
+    private static String ARG_ALBUM_NAME;
 
     ArrayList<ImageModel> data = new ArrayList<>();
     // TODO: Rename and change types of parameters
 
-//    private OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener mListener;
 
     public MomentsFragment() {
         // Required empty public constructor
+        ARG_ALBUM_NAME = null;
     }
 
-    public static MomentsFragment newInstance(String param1) {
+    public static MomentsFragment newInstance(String albumName) {
         MomentsFragment fragment = new MomentsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_ALBUM_NAME, param1);
-        fragment.setArguments(args);
+        ARG_ALBUM_NAME = albumName;
         return fragment;
     }
 
@@ -44,12 +45,12 @@ public class MomentsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Utils utils = new Utils(getActivity());
-        if (getArguments() != null) {
+        if (ARG_ALBUM_NAME == null) {
             IMGS = utils.getFilePaths(null);
             getActivity().setTitle("MOMENTS");
         } else {
-            IMGS = utils.getFilePaths(getArguments().getString(ARG_ALBUM_NAME));
-            getActivity().setTitle(String.format("ALBUM(%s)", getArguments().getString(ARG_ALBUM_NAME)));
+            IMGS = utils.getFilePaths(ARG_ALBUM_NAME);
+            getActivity().setTitle("ALBUMS");
         }
     }
 
@@ -88,23 +89,23 @@ public class MomentsFragment extends Fragment {
         return layout;
     }
 
-//
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -116,8 +117,8 @@ public class MomentsFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-//    public interface OnFragmentInteractionListener {
-//        // TODO: Update argument type and name
-//        void onFragmentInteraction(Uri uri);
-//    }
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+    }
 }

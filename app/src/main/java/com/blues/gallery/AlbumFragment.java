@@ -30,7 +30,7 @@ public class AlbumFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Set action bar title
-        getActivity().setTitle("ALBUM");
+        getActivity().setTitle("ALBUMS");
         Utils utils = new Utils(getActivity());
         IMGS = utils.getFilePaths(null);
         this.albumList = new ArrayList<>(IMGS.keySet());
