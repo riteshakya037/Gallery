@@ -1,31 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginTop="8dp"
+    android:background="#fff"
+    card_view:cardCornerRadius="1dp">
 
-    <ImageView
-        android:id="@+id/imageViewLarge"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/imageViewTop"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/imageViewBottom"
+            <ImageView
+                android:id="@+id/imageViewLarge"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:background="@color/background_material_dark"
+                android:elevation="5dp"
+                android:src="@drawable/test_image" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/imageViewTop"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="1"
+                    android:background="@color/background_material_dark"
+                    android:elevation="5dp"
+                    android:src="@drawable/test_image" />
+
+                <ImageView
+                    android:id="@+id/imageViewBottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="1"
+                    android:background="@color/background_material_dark"
+                    android:elevation="5dp"
+                    android:src="@drawable/test_image" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-    </LinearLayout>
-</LinearLayout>
+            android:layout_height="match_parent"
+            android:background="@color/darkTintAlpha"
+            android:elevation="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/albumName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="8dp"
+                    android:singleLine="false"
+                    android:text="Test Album asdas das dasd asd adasd asd"
+                    android:textColor="@color/primary_material_light"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:id="@+id/albumSize"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:padding="8dp"
+                    android:text="28 Photos"
+                    android:textColor="@color/primary_material_light"
+                    android:textSize="14sp"
+                    android:layout_gravity="bottom|end" />
+            </LinearLayout>
+        </RelativeLayout>
+    </FrameLayout>
+</android.support.v7.widget.CardView>

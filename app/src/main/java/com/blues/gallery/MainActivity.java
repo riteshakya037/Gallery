@@ -1,6 +1,7 @@
 package com.blues.gallery;
 
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -11,7 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AlbumFragment.OnFragmentInteractionListener {
 
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
@@ -75,23 +76,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
-        Fragment fragment = null;
-        Class fragmentClass;
+        Fragment fragment;
         switch (menuItem.getItemId()) {
             case R.id.nav_first_fragment:
-                fragmentClass = AlbumFragment.class;
+                fragment = new AlbumFragment();
                 break;
             case R.id.nav_second_fragment:
-                fragmentClass = MomentsFragment.class;
+                fragment = MomentsFragment.newInstance(null);
                 break;
             default:
-                fragmentClass = AlbumFragment.class;
-        }
-
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
+                fragment = new AlbumFragment();
         }
 
         // Insert the fragment by replacing any existing fragment
@@ -100,8 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Highlight the selected item has been done by NavigationView
         menuItem.setChecked(true);
-        // Set action bar title
-        setTitle(menuItem.getTitle());
+
         // Close the navigation drawer
         mDrawer.closeDrawers();
     }
@@ -114,4 +107,8 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 }
