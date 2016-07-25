@@ -121,4 +121,12 @@ public class Utils {
     public static String getName(String filePath) {
         return (new File(filePath)).getName();
     }
+
+    public static double mapValueFromRangeToRange(double value, double fromLow, double toHigh) {
+        return fromLow * (1f - value) + toHigh * (value);
+    }
+
+    public static double clamp(double value, double low, double high) {
+        return Math.min(Math.max(value, low), high);
+    }
 }
