@@ -1,4 +1,4 @@
-package com.blues.gallery;
+package com.blues.gallery.Adaptors;
 
 import android.os.Parcel;
 import android.os.Parcelable;

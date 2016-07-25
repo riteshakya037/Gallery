@@ -1,4 +1,4 @@
-package com.blues.gallery;
+package com.blues.gallery.Activity;
 
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -11,6 +11,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+
+import com.blues.gallery.R;
 
 public class MainActivity extends AppCompatActivity implements AlbumFragment.OnFragmentInteractionListener, MomentsFragment.OnFragmentInteractionListener {
 

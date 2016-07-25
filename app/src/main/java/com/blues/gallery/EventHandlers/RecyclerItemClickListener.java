@@ -1,4 +1,4 @@
-package com.blues.gallery;
+package com.blues.gallery.EventHandlers;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

@@ -1,21 +1,24 @@
-package com.blues.gallery;
+package com.blues.gallery.Activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.blues.gallery.Adaptors.GalleryAdapter;
 import com.blues.gallery.Helper.Utils;
+import com.blues.gallery.Adaptors.ImageModel;
+import com.blues.gallery.R;
+import com.blues.gallery.EventHandlers.RecyclerItemClickListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.StringTokenizer;
 
 
 public class MomentsFragment extends Fragment {
@@ -70,19 +73,19 @@ public class MomentsFragment extends Fragment {
         mAdapter = new GalleryAdapter(getActivity(), data);
         mRecyclerView.setAdapter(mAdapter);
 
-//        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
-//                new RecyclerItemClickListener.OnItemClickListener() {
-//
-//                    @Override
-//                    public void onItemClick(View view, int position) {
-//
-//                        Intent intent = new Intent(getContext(), DetailActivity.class);
-//                        intent.putParcelableArrayListExtra("data", data);
-//                        intent.putExtra("pos", position);
-//                        startActivity(intent);
-//
-//                    }
-//                }));
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
+                new RecyclerItemClickListener.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(View view, int position) {
+
+                        Intent intent = new Intent(getContext(), CarouselActivity.class);
+                        intent.putParcelableArrayListExtra("data", data);
+                        intent.putExtra("pos", position);
+                        startActivity(intent);
+
+                    }
+                }));
 
 
         // Inflate the layout for this fragment
@@ -112,7 +115,7 @@ public class MomentsFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
+     * <p>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.

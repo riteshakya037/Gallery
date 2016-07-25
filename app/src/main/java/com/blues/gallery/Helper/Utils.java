@@ -3,11 +3,10 @@ package com.blues.gallery.Helper;
 import android.content.Context;
 import android.graphics.Point;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.blues.gallery.ImageModel;
+import com.blues.gallery.Adaptors.ImageModel;
 
 import java.io.File;
 import java.util.ArrayList;

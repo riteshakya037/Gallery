@@ -5,4 +5,5 @@
     android:layout_height="128dp"
     android:layout_margin="1dp"
     android:adjustViewBounds="true"
+    android:contentDescription=""
     android:scaleType="centerCrop" />

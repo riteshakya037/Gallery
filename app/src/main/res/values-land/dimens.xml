@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <dimen name="viewpager_margin">-64dp</dimen>
+    <dimen name="viewpager_margin_fix">32dp</dimen>
+    <dimen name="carouselWidth">450dp</dimen>
+</resources>
