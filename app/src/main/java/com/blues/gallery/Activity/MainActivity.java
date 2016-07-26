@@ -20,6 +20,8 @@ public class MainActivity extends AppCompatActivity implements AlbumFragment.OnF
     private Toolbar toolbar;
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
+    private AlbumFragment mTaskFragment;
+    private static final String TAG_TASK_FRAGMENT = "task_fragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +36,15 @@ public class MainActivity extends AppCompatActivity implements AlbumFragment.OnF
 
         nvDrawer = (NavigationView) findViewById(R.id.nvView);
         setupDrawerContent(nvDrawer);
+        FragmentManager fm = getSupportFragmentManager();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragContainer, new AlbumFragment()).commit();
 
-        setTitle("Album");
+        // If the Fragment is non-null, then it is currently being
+        // retained across a configuration change.
+        if (fm.getFragments() == null) {
+            mTaskFragment = new AlbumFragment();
+            fm.beginTransaction().replace(R.id.fragContainer, mTaskFragment).commit();
+        }
 
         mDrawer.addDrawerListener(drawerToggle);
     }

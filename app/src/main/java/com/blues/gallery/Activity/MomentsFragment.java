@@ -25,7 +25,7 @@ public class MomentsFragment extends Fragment {
     GalleryAdapter mAdapter;
     RecyclerView mRecyclerView;
     public static HashMap<String, ArrayList<ImageModel>> IMGS;
-    private static String ARG_ALBUM_NAME;
+    private static String ARG_ALBUM_NAME= null;
 
     ArrayList<ImageModel> data = new ArrayList<>();
     // TODO: Rename and change types of parameters
@@ -34,7 +34,6 @@ public class MomentsFragment extends Fragment {
 
     public MomentsFragment() {
         // Required empty public constructor
-        ARG_ALBUM_NAME = null;
     }
 
     public static MomentsFragment newInstance(String albumName) {
@@ -64,30 +63,30 @@ public class MomentsFragment extends Fragment {
         for (ArrayList<ImageModel> IMG : IMGS.values()) {
             data.addAll(IMG);
         }
-
-        mRecyclerView = (RecyclerView) layout.findViewById(R.id.momentsView);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3, GridLayoutManager.VERTICAL, false));
-        mRecyclerView.setHasFixedSize(true);
-
-
-        mAdapter = new GalleryAdapter(getActivity(), data);
-        mRecyclerView.setAdapter(mAdapter);
-
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
-                new RecyclerItemClickListener.OnItemClickListener() {
-
-                    @Override
-                    public void onItemClick(View view, int position) {
-
-                        Intent intent = new Intent(getContext(), CarouselActivity.class);
-                        intent.putParcelableArrayListExtra("data", data);
-                        intent.putExtra("pos", position);
-                        startActivity(intent);
-
-                    }
-                }));
+        if (mRecyclerView == null) {
+            mRecyclerView = (RecyclerView) layout.findViewById(R.id.momentsView);
+            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3, GridLayoutManager.VERTICAL, false));
+            mRecyclerView.setHasFixedSize(true);
 
 
+            mAdapter = new GalleryAdapter(getActivity(), data);
+            mRecyclerView.setAdapter(mAdapter);
+
+            mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
+                    new RecyclerItemClickListener.OnItemClickListener() {
+
+                        @Override
+                        public void onItemClick(View view, int position) {
+
+                            Intent intent = new Intent(getContext(), CarouselActivity.class);
+                            intent.putParcelableArrayListExtra("data", data);
+                            intent.putExtra("pos", position);
+                            startActivity(intent);
+
+                        }
+                    }));
+
+        }
         // Inflate the layout for this fragment
         return layout;
     }
@@ -115,7 +114,7 @@ public class MomentsFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
+     * <p/>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.

@@ -21,7 +21,13 @@ public class DummyActivity extends AppCompatActivity {
         if (MyVersion > Build.VERSION_CODES.LOLLIPOP_MR1) {
             if (!checkIfAlreadyHavePermission()) {
                 requestForSpecificPermission();
+            } else {
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
             }
+        } else {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
         }
     }
 
