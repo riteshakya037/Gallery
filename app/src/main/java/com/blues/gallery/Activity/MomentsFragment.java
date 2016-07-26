@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -80,6 +81,7 @@ public class MomentsFragment extends Fragment {
             for (ArrayList<ImageModel> IMG : IMGS.values()) {
                 data.addAll(IMG);
             }
+            newData = data;
             Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
             spinner = (Spinner) toolbar.findViewById(R.id.spinner_nav);
             spinner.setVisibility(View.VISIBLE);
@@ -94,7 +96,10 @@ public class MomentsFragment extends Fragment {
             spinner.setOnItemSelectedListener(listener);
 
             mRecyclerView = (RecyclerView) layout.findViewById(R.id.momentsView);
-            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3, GridLayoutManager.VERTICAL, false));
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+                mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3, GridLayoutManager.VERTICAL, false));
+            else
+                mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4, GridLayoutManager.VERTICAL, false));
             mRecyclerView.setHasFixedSize(true);
 
 
@@ -106,7 +111,6 @@ public class MomentsFragment extends Fragment {
 
                         @Override
                         public void onItemClick(View view, int position) {
-
                             Intent intent = new Intent(getContext(), CarouselActivity.class);
                             intent.putParcelableArrayListExtra("data", newData);
                             intent.putExtra("pos", position);
