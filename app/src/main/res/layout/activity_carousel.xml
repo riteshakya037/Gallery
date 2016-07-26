@@ -1,5 +1,4 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,11 +9,21 @@
     <com.blues.gallery.CustomViews.MultiViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        app:matchChildWidth="@+id/vg_cover"
-        android:background="@color/darkTint" />
+        android:layout_height="match_parent"
+        android:background="@color/darkTint"
+        app:matchChildWidth="@+id/vg_cover" />
 
+    <RelativeLayout
+        android:id="@+id/threeButton"
+        android:layout_width="match_parent"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_height="32dp">
 
-
-</LinearLayout>
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/three_dot"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+</FrameLayout>

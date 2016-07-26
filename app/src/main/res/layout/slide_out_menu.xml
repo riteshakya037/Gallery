@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottomSheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@color/darkTint"
+    android:orientation="vertical"
+    android:paddingBottom="8dp"
+    android:paddingTop="8dp">
+
+    <RelativeLayout
+        android:id="@+id/threeButtonPanel"
+        android:layout_width="match_parent"
+        android:layout_height="32dp">
+
+        <ImageView
+            android:id="@+id/threeButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:src="@drawable/three_dot"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/contentPanel"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/photoTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Photo Title"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/primary_text_dark" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TAKEN ON"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/holo_blue_bright" />
+
+            <TextView
+                android:id="@+id/dateTaken"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="JULY 15,2016"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@android:color/primary_text_dark" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ALBUM"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+
+                android:textColor="@android:color/holo_blue_bright" />
+
+            <TextView
+                android:id="@+id/albumName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Screenshots"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@android:color/primary_text_dark" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Source"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/holo_blue_bright" />
+
+            <TextView
+                android:id="@+id/albumSource"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Local storage"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@android:color/primary_text_dark" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

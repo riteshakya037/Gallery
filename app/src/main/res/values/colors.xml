@@ -3,6 +3,6 @@
     <color name="colorPrimary">#9E9E9E</color>
     <color name="colorPrimaryDark">#212121</color>
     <color name="colorAccent">#81D4FA</color>
-    <color name="darkTint">#9E9E9E</color>
-    <color name="darkTintAlpha">#0A9E9E9E</color>
+    <color name="darkTint">#303030</color>
+    <color name="darkTintAlpha">#0A303030</color>
 </resources>
