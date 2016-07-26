@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements AlbumFragment.OnF
                 fragment = new AlbumFragment();
                 break;
             case R.id.nav_second_fragment:
-                fragment = new MomentsFragment();
+                fragment = MomentsFragment.newInstance(null);
                 break;
             default:
                 fragment = new AlbumFragment();
