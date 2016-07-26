@@ -6,9 +6,13 @@
 
     <RelativeLayout
         android:id="@+id/vg_cover"
-        android:layout_width="@dimen/carouselWidth"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
+        android:adjustViewBounds="true"
+        android:layout_marginLeft="@dimen/viewpager_margin_fix"
+        android:layout_marginRight="@dimen/viewpager_margin_fix"
+        android:scaleType="fitCenter"
         tools:ignore="UselessParent">
 
 
@@ -16,9 +20,9 @@
             android:id="@+id/imageHolder"
             style="?android:textAppearanceMedium"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/test_image"
-            android:layout_centerInParent="true" />
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:src="@drawable/test_image" />
 
     </RelativeLayout>
 

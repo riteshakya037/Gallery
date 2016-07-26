@@ -1,11 +1,16 @@
 package com.blues.gallery.Activity;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -37,8 +42,18 @@ public class MainActivity extends AppCompatActivity implements AlbumFragment.OnF
         nvDrawer = (NavigationView) findViewById(R.id.nvView);
         // Setup drawer view
         setupDrawerContent(nvDrawer);
+        int MyVersion = Build.VERSION.SDK_INT;
+        if (MyVersion > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            if (!checkIfAlreadyhavePermission()) {
+                requestForSpecificPermission();
+            } else {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragContainer, new AlbumFragment()).commit();
+            }
+        } else {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragContainer, new AlbumFragment()).commit();
+        }
+
         // Insert the fragment by replacing any existing fragment\
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragContainer, new AlbumFragment()).commit();
         setTitle("Album");
 
         // Tie DrawerLayout events to the ActionBarToggle
@@ -89,10 +104,18 @@ public class MainActivity extends AppCompatActivity implements AlbumFragment.OnF
             default:
                 fragment = new AlbumFragment();
         }
-
-        // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.fragContainer, fragment).commit();
+        // Insert the fragment by replacing any existing fragment
+        int MyVersion = Build.VERSION.SDK_INT;
+        if (MyVersion > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            if (!checkIfAlreadyhavePermission()) {
+                requestForSpecificPermission();
+            } else {
+                fragmentManager.beginTransaction().replace(R.id.fragContainer, fragment).commit();
+            }
+        } else {
+            fragmentManager.beginTransaction().replace(R.id.fragContainer, fragment).commit();
+        }
 
         // Highlight the selected item has been done by NavigationView
         menuItem.setChecked(true);
@@ -112,5 +135,35 @@ public class MainActivity extends AppCompatActivity implements AlbumFragment.OnF
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    private boolean checkIfAlreadyhavePermission() {
+        int result = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+        return result == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestForSpecificPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 101);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 101:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    recreate();
+                } else {
+                    requestForSpecificPermission();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 }

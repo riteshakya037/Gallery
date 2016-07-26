@@ -106,7 +106,7 @@ public class MultiViewPager extends ViewPager {
                                 + "is that view defined in the child view's layout? Note that MultiViewPager "
                                 + "only measures the child for index 0.");
             }
-            int childWidth = match.getMeasuredWidth();
+            int childWidth = match.getMeasuredWidth() - 32;
             // Check that the measurement was successful
             if (childWidth > 0) {
                 mNeedsMeasurePage = false;

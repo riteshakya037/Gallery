@@ -56,7 +56,7 @@ public class CarouselActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View view) {
-            showBottomSheet(pager.getCurrentItem());
+        showBottomSheet(pager.getCurrentItem());
     }
 
     public void showBottomSheet(int mPageNumber) {
