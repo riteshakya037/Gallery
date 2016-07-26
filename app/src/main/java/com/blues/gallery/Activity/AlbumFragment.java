@@ -8,9 +8,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Spinner;
 
 import com.blues.gallery.Adaptors.AlbumAdapter;
 import com.blues.gallery.Adaptors.ImageModel;
@@ -44,33 +46,36 @@ public class AlbumFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_album, container, false);
-
-        mRecyclerView = (RecyclerView) layout.findViewById(R.id.albumView);
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        else
-            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        mRecyclerView.setHasFixedSize(true);
-
-
-        mAdapter = new AlbumAdapter(getActivity(), IMGS);
-        mRecyclerView.setAdapter(mAdapter);
-
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
-                new RecyclerItemClickListener.OnItemClickListener() {
-
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        MomentsFragment nextFrag = MomentsFragment.newInstance(albumList.get(position));
-                        getFragmentManager().beginTransaction()
-                                .replace(R.id.fragContainer, nextFrag, "")
-                                .addToBackStack(null)
-                                .commit();
-
-                    }
-                }));
+        if (mRecyclerView == null) {
+            Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+            Spinner spinner = (Spinner) toolbar.findViewById(R.id.spinner_nav);
+            spinner.setVisibility(View.GONE);
+            mRecyclerView = (RecyclerView) layout.findViewById(R.id.albumView);
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            else
+                mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+            mRecyclerView.setHasFixedSize(true);
 
 
+            mAdapter = new AlbumAdapter(getActivity(), IMGS);
+            mRecyclerView.setAdapter(mAdapter);
+
+            mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
+                    new RecyclerItemClickListener.OnItemClickListener() {
+
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            MomentsFragment nextFrag = MomentsFragment.newInstance(albumList.get(position));
+                            getFragmentManager().beginTransaction()
+                                    .replace(R.id.fragContainer, nextFrag, "")
+                                    .addToBackStack(null)
+                                    .commit();
+
+                        }
+                    }));
+
+        }
         // Inflate the layout for this fragment
         return layout;
     }

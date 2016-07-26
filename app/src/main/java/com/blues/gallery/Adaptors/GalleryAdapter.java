@@ -54,6 +54,10 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return data.size();
     }
 
+    public void getData(ArrayList<ImageModel> newData) {
+        this.data = newData;
+    }
+
     public static class MyItemHolder extends RecyclerView.ViewHolder {
         ImageView mImg;
 
