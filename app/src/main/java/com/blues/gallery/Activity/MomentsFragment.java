@@ -12,10 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.blues.gallery.Adaptors.GalleryAdapter;
-import com.blues.gallery.Helper.Utils;
 import com.blues.gallery.Adaptors.ImageModel;
-import com.blues.gallery.R;
 import com.blues.gallery.EventHandlers.RecyclerItemClickListener;
+import com.blues.gallery.Helper.Utils;
+import com.blues.gallery.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;

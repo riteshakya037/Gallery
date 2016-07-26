@@ -9,4 +9,6 @@
     <string name="moments">Moments</string>
     <string name="local_storage">LOCAL STORAGE</string>
     <string name="photos">PHOTOS</string>
+    <string name="title_activity_dummy">DummyActivity</string>
+    <string name="action_settings">Settings</string>
 </resources>
