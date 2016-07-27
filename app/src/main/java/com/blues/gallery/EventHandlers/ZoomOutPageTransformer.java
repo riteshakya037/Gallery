@@ -3,6 +3,8 @@ package com.blues.gallery.EventHandlers;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
+import com.blues.gallery.R;
+
 /**
  * Created by Ritesh Shakya on 7/25/2016.
  */
@@ -11,7 +13,7 @@ public class ZoomOutPageTransformer implements ViewPager.PageTransformer {
     private static final float MIN_ALPHA = 0.85f;
 
     public void transformPage(View view, float position) {
-        int pageWidth = view.getWidth();
+        int pageWidth = view.findViewById(R.id.vg_cover).getWidth();
         int pageHeight = view.getHeight();
 
         if (position < -1) { // [-Infinity,-1)

@@ -3,7 +3,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="viewpager_margin">-64dp</dimen>
-    <dimen name="viewpager_margin_fix">64dp</dimen>
+    <dimen name="viewpager_margin_fix">0dp</dimen>
     <dimen name="carouselWidth">250dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 </resources>

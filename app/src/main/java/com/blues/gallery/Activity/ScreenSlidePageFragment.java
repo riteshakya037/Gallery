@@ -22,8 +22,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.blues.gallery.Adaptors.ImageModel;
+import com.blues.gallery.Helper.Utils;
 import com.blues.gallery.R;
 import com.bumptech.glide.Glide;
 
@@ -66,12 +68,17 @@ public class ScreenSlidePageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Utils utils = new Utils(getActivity());
         // Inflate the layout containing a title and body text.
         ViewGroup rootView = (ViewGroup) inflater
                 .inflate(R.layout.fragment_screen_slide_page, container, false);
         ImageView imageView = (ImageView) rootView.findViewById(R.id.imageHolder);
         Glide.with(getActivity()).load(mImage.getUrl())
                 .thumbnail(1f).into(imageView);
+        RelativeLayout relativeLayout = (RelativeLayout) rootView.findViewById(R.id.vg_cover);
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) relativeLayout.getLayoutParams();
+        layoutParams.width = (int) (utils.getScreenWidth() * .6f);
+        relativeLayout.setLayoutParams(layoutParams);
         return rootView;
     }
 
