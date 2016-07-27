@@ -54,15 +54,14 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(((MyItemHolder) holder).imageViewLarge);
+        Glide.with(context).load(imageModels.get(0).getUrl())
+                .thumbnail(0.5f)
+                .centerCrop()
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .into(((MyItemHolder) holder).imageViewTop);
         if (imageModels.size() > 1)
             Glide.with(context).load(imageModels.get(1).getUrl())
-                    .thumbnail(0.5f)
-                    .centerCrop()
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .into(((MyItemHolder) holder).imageViewTop);
-        if (imageModels.size() > 2)
-            Glide.with(context).load(imageModels.get(2).getUrl())
                     .thumbnail(0.5f)
                     .centerCrop()
                     .crossFade()

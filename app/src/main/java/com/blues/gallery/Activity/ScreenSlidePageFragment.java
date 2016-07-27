@@ -73,8 +73,8 @@ public class ScreenSlidePageFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater
                 .inflate(R.layout.fragment_screen_slide_page, container, false);
         ImageView imageView = (ImageView) rootView.findViewById(R.id.imageHolder);
-        Glide.with(getActivity()).load(mImage.getUrl())
-                .thumbnail(1f).into(imageView);
+        Glide.with(getActivity()).load(mImage.getUrl()).asBitmap()
+                .into(imageView);
         RelativeLayout relativeLayout = (RelativeLayout) rootView.findViewById(R.id.vg_cover);
         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) relativeLayout.getLayoutParams();
         layoutParams.width = (int) (utils.getScreenWidth() * .6f);

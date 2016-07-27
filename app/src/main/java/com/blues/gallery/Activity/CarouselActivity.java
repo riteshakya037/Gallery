@@ -65,6 +65,7 @@ public class CarouselActivity extends AppCompatActivity implements View.OnClickL
         pager.setAdapter(adapter);
         pager.setPageTransformer(true, new ZoomOutPageTransformer());
         pager.setCurrentItem(pos);
+        changeBottomDetail(pos);
         pager.addOnPageChangeListener(this);
         imageView = (RelativeLayout) findViewById(R.id.threeButton);
         imageView.setOnClickListener(this);
@@ -145,28 +146,28 @@ public class CarouselActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        if (oldPosition != position) {
-            oldPosition = position;
-            
-            TextView title = (TextView) findViewById(R.id.photoTitle);
-            title.setText(data.get(position).getName());
 
-            File file = new File(data.get(position).getUrl());
-            Date d = new Date(file.lastModified());
-            String PATTERN = "MMMM dd, yyyy";
-            SimpleDateFormat dateFormat = new SimpleDateFormat();
-            dateFormat.applyPattern(PATTERN);
+    }
 
-            TextView dateTaken = (TextView) findViewById(R.id.dateTaken);
-            dateTaken.setText(dateFormat.format(d));
+    private void changeBottomDetail(int position) {
+        TextView title = (TextView) findViewById(R.id.photoTitle);
+        title.setText(data.get(position).getName());
+        File file = new File(data.get(position).getUrl());
+        Date d = new Date(file.lastModified());
+        String PATTERN = "MMMM dd, yyyy";
+        SimpleDateFormat dateFormat = new SimpleDateFormat();
+        dateFormat.applyPattern(PATTERN);
 
-            TextView albumName = (TextView) findViewById(R.id.albumName);
-            albumName.setText(Utils.getName(file.getParent()));
-        }
+        TextView dateTaken = (TextView) findViewById(R.id.dateTaken);
+        dateTaken.setText(dateFormat.format(d));
+
+        TextView albumName = (TextView) findViewById(R.id.albumName);
+        albumName.setText(Utils.getName(file.getParent()));
     }
 
     @Override
     public void onPageSelected(int position) {
+        changeBottomDetail(position);
     }
 
     @Override
