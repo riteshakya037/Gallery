@@ -4,7 +4,7 @@
     android:id="@+id/wrapper"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/darkTint"
+    android:background="@android:color/black"
     android:orientation="vertical"
     tools:context=".Activity.CarouselActivity">
 
@@ -111,7 +111,7 @@
     <com.blues.gallery.CustomViews.MultiViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@id/threeButton"
         app:matchChildWidth="@+id/vg_cover" />
 </RelativeLayout>

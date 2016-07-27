@@ -5,13 +5,22 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Toast;
 
+import com.blues.gallery.Adaptors.ImageModel;
+import com.blues.gallery.Helper.Utils;
 import com.blues.gallery.R;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class DummyActivity extends AppCompatActivity {
+    public static HashMap<String, ArrayList<ImageModel>> IMGS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,13 +31,20 @@ public class DummyActivity extends AppCompatActivity {
             if (!checkIfAlreadyHavePermission()) {
                 requestForSpecificPermission();
             } else {
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
+                init();
             }
         } else {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            init();
         }
+    }
+
+    private void init() {
+        Toast.makeText(this, "Scanning for Images",
+                Toast.LENGTH_LONG).show();
+        Utils utils = new Utils(DummyActivity.this);
+        IMGS = utils.getFilePaths(null);
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     private boolean checkIfAlreadyHavePermission() {
@@ -40,10 +56,8 @@ public class DummyActivity extends AppCompatActivity {
     }
 
     public void requestForSpecificPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 101);
-        }
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_LOGS}, 101);
     }
 
     @Override
@@ -51,8 +65,7 @@ public class DummyActivity extends AppCompatActivity {
         switch (requestCode) {
             case 101:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Intent intent = new Intent(this, MainActivity.class);
-                    startActivity(intent);
+                    init();
                 } else {
                     requestForSpecificPermission();
                 }

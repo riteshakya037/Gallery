@@ -2,7 +2,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,10 +15,12 @@
             android:id="@+id/imageViewLarge"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:background="@color/background_material_dark"
-            android:elevation="5dp"
-            android:src="@drawable/test_image" />
+            android:layout_marginRight="8dp"
+            android:layout_weight="1.5"
+            android:adjustViewBounds="true"
+
+            android:background="@android:color/black"
+            android:scaleType="fitCenter" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -28,35 +32,36 @@
                 android:id="@+id/imageViewTop"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2"
-                android:background="@color/background_material_dark"
-                android:elevation="5dp"
-                android:src="@drawable/test_image" />
+                android:layout_weight="1.5"
+                android:adjustViewBounds="true"
+                android:background="@android:color/black"
+
+                android:scaleType="fitCenter" />
 
             <ImageView
                 android:id="@+id/imageViewBottom"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="@color/background_material_dark"
-                android:elevation="5dp"
-                android:src="@drawable/test_image" />
+                android:adjustViewBounds="true"
+                android:background="@android:color/black"
+
+                android:scaleType="fitCenter"/>
         </LinearLayout>
     </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/darkTintAlpha"
-        android:elevation="10dp">
+        android:background="@color/darkTintAlpha">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:background="@drawable/gradient"
             android:orientation="horizontal"
-            android:padding="8dp"
-            android:background="@drawable/gradient">
+            android:padding="8dp">
 
             <LinearLayout
                 android:layout_width="0dp"

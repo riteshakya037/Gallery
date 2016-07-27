@@ -21,8 +21,7 @@
             style="?android:textAppearanceMedium"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:src="@drawable/test_image" />
+            android:layout_centerInParent="true" />
 
     </RelativeLayout>
 

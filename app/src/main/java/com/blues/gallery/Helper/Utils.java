@@ -33,7 +33,7 @@ public class Utils {
 
         File directory = new File(
                 android.os.Environment.getExternalStorageDirectory()
-                        + File.separator + AppConstant.PHOTO_ALBUM);
+                        + File.separator);
 
         // check for directory
         if (directory.isDirectory()) {
@@ -91,7 +91,7 @@ public class Utils {
                 filePath.length());
 
         if (AppConstant.FILE_EXTN
-                .contains(ext.toLowerCase(Locale.getDefault())) && !ext.startsWith("."))
+                .contains(ext.toLowerCase(Locale.getDefault())) && !(new File(filePath).getName().startsWith(".")))
             return true;
         else
             return false;

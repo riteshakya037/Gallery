@@ -2,4 +2,5 @@
     android:id="@+id/albumView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/darkTint"/>
+    android:background="@android:color/black"
+    android:scrollbars="vertical" />

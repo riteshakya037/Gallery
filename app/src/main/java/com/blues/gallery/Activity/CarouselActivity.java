@@ -147,7 +147,7 @@ public class CarouselActivity extends AppCompatActivity implements View.OnClickL
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         if (oldPosition != position) {
             oldPosition = position;
-
+            
             TextView title = (TextView) findViewById(R.id.photoTitle);
             title.setText(data.get(position).getName());
 

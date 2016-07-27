@@ -15,20 +15,18 @@ import android.view.ViewGroup;
 import android.widget.Spinner;
 
 import com.blues.gallery.Adaptors.AlbumAdapter;
-import com.blues.gallery.Adaptors.ImageModel;
 import com.blues.gallery.EventHandlers.RecyclerItemClickListener;
-import com.blues.gallery.Helper.Utils;
 import com.blues.gallery.R;
 
+import static com.blues.gallery.Activity.DummyActivity.IMGS;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class AlbumFragment extends Fragment {
     AlbumAdapter mAdapter;
     RecyclerView mRecyclerView;
     private ArrayList<String> albumList = new ArrayList<>();
 
-    public static HashMap<String, ArrayList<ImageModel>> IMGS;
     private OnFragmentInteractionListener mListener;
 
     @Override
@@ -36,8 +34,6 @@ public class AlbumFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // Set action bar title
         getActivity().setTitle("ALBUMS");
-        Utils utils = new Utils(getActivity());
-        IMGS = utils.getFilePaths(null);
         this.albumList = new ArrayList<>(IMGS.keySet());
 
     }
@@ -46,36 +42,35 @@ public class AlbumFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_album, container, false);
-        if (mRecyclerView == null) {
-            Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-            Spinner spinner = (Spinner) toolbar.findViewById(R.id.spinner_nav);
-            spinner.setVisibility(View.GONE);
-            mRecyclerView = (RecyclerView) layout.findViewById(R.id.albumView);
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            else
-                mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-            mRecyclerView.setHasFixedSize(true);
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        Spinner spinner = (Spinner) toolbar.findViewById(R.id.spinner_nav);
+        spinner.setVisibility(View.GONE);
+        mRecyclerView = (RecyclerView) layout.findViewById(R.id.albumView);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        else
+            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        mRecyclerView.setHasFixedSize(true);
 
 
-            mAdapter = new AlbumAdapter(getActivity(), IMGS);
-            mRecyclerView.setAdapter(mAdapter);
+        mAdapter = new AlbumAdapter(getActivity(), IMGS);
+        mRecyclerView.setAdapter(mAdapter);
 
-            mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
-                    new RecyclerItemClickListener.OnItemClickListener() {
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
+                new RecyclerItemClickListener.OnItemClickListener() {
 
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            MomentsFragment nextFrag = MomentsFragment.newInstance(albumList.get(position));
-                            getFragmentManager().beginTransaction()
-                                    .replace(R.id.fragContainer, nextFrag, "")
-                                    .addToBackStack(null)
-                                    .commit();
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        MomentsFragment nextFrag = MomentsFragment.newInstance(albumList.get(position));
+                        getFragmentManager().beginTransaction()
+                                .replace(R.id.fragContainer, nextFrag, "")
+                                .addToBackStack(null)
+                                .commit();
 
-                        }
-                    }));
+                    }
+                }));
 
-        }
+
         // Inflate the layout for this fragment
         return layout;
     }

@@ -16,7 +16,9 @@
         android:theme="@style/AppTheme">
         <activity android:name=".Activity.MainActivity" />
         <activity android:name=".Activity.CarouselActivity" />
-        <activity android:name=".Activity.DummyActivity">
+        <activity
+            android:name=".Activity.DummyActivity"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

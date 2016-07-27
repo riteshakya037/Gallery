@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -30,16 +31,15 @@ import com.blues.gallery.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Locale;
+
+import static com.blues.gallery.Activity.DummyActivity.IMGS;
 
 
 public class MomentsFragment extends Fragment {
     GalleryAdapter mAdapter;
     RecyclerView mRecyclerView;
-    public static HashMap<String, ArrayList<ImageModel>> IMGS;
     private static String ARG_ALBUM_NAME = null;
 
     ArrayList<ImageModel> data = new ArrayList<>();
@@ -65,11 +65,14 @@ public class MomentsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Utils utils = new Utils(getActivity());
         if (ARG_ALBUM_NAME == null) {
-            IMGS = utils.getFilePaths(null);
             getActivity().setTitle("MOMENTS");
+            for (ArrayList<ImageModel> IMG : IMGS.values()) {
+                data.addAll(IMG);
+            }
         } else {
-            IMGS = utils.getFilePaths(ARG_ALBUM_NAME);
+            data.addAll(IMGS.get(ARG_ALBUM_NAME));
             getActivity().setTitle("ALBUMS");
+
         }
     }
 
@@ -78,9 +81,6 @@ public class MomentsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_moments, container, false);
         if (mRecyclerView == null) {
-            for (ArrayList<ImageModel> IMG : IMGS.values()) {
-                data.addAll(IMG);
-            }
             newData = data;
             Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
             spinner = (Spinner) toolbar.findViewById(R.id.spinner_nav);
@@ -97,9 +97,9 @@ public class MomentsFragment extends Fragment {
 
             mRecyclerView = (RecyclerView) layout.findViewById(R.id.momentsView);
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-                mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3, GridLayoutManager.VERTICAL, false));
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
             else
-                mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4, GridLayoutManager.VERTICAL, false));
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
             mRecyclerView.setHasFixedSize(true);
 
 
