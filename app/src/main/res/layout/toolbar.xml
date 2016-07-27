@@ -8,8 +8,9 @@
     android:minHeight="?attr/actionBarSize"
     app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-    <Spinner
+    <com.blues.gallery.CustomViews.NDSpinner
         android:id="@+id/spinner_nav"
+        style="@style/Widget.MyApp.HeaderBar.Spinner"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="end"

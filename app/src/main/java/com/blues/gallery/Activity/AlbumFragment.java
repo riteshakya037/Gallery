@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Spinner;
 
 import com.blues.gallery.Adaptors.AlbumAdapter;
+import com.blues.gallery.CustomViews.NDSpinner;
 import com.blues.gallery.EventHandlers.RecyclerItemClickListener;
 import com.blues.gallery.R;
 
@@ -43,7 +44,7 @@ public class AlbumFragment extends Fragment {
                              Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_album, container, false);
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        Spinner spinner = (Spinner) toolbar.findViewById(R.id.spinner_nav);
+        NDSpinner spinner = (NDSpinner) toolbar.findViewById(R.id.spinner_nav);
         spinner.setVisibility(View.GONE);
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.albumView);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)

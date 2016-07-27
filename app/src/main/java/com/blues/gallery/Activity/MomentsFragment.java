@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -18,20 +17,23 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.blues.gallery.Adaptors.GalleryAdapter;
 import com.blues.gallery.Adaptors.ImageModel;
+import com.blues.gallery.CustomViews.NDSpinner;
 import com.blues.gallery.EventHandlers.RecyclerItemClickListener;
 import com.blues.gallery.Helper.Utils;
 import com.blues.gallery.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 import static com.blues.gallery.Activity.DummyActivity.IMGS;
@@ -46,7 +48,7 @@ public class MomentsFragment extends Fragment {
     // TODO: Rename and change types of parameters
 
     private OnFragmentInteractionListener mListener;
-    private Spinner spinner;
+    private NDSpinner spinner;
     private ArrayList<ImageModel> newData;
 
     public MomentsFragment() {
@@ -83,12 +85,11 @@ public class MomentsFragment extends Fragment {
         if (mRecyclerView == null) {
             newData = data;
             Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-            spinner = (Spinner) toolbar.findViewById(R.id.spinner_nav);
+            spinner = (NDSpinner) toolbar.findViewById(R.id.spinner_nav);
             spinner.setVisibility(View.VISIBLE);
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(toolbar.getContext(),
-                    R.array.spinner_list_item_array, R.layout.support_simple_spinner_dropdown_item);
-            adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-            spinner.setAdapter(adapter);
+            CustomSpinnerAdaptor spinnerAdapter = new CustomSpinnerAdaptor();
+            spinnerAdapter.addItems(Arrays.asList(getResources().getStringArray(R.array.spinner_list_item_array)));
+            spinner.setAdapter(spinnerAdapter);
 
             SpinnerInteractionListener listener = new SpinnerInteractionListener();
             spinner.setOnTouchListener(listener);
@@ -274,5 +275,57 @@ public class MomentsFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private class CustomSpinnerAdaptor extends BaseAdapter {
+        private List<String> mItems = new ArrayList<>();
+
+        public void addItems(List<String> yourObjectList) {
+            mItems.addAll(yourObjectList);
+        }
+
+        @Override
+        public int getCount() {
+            return mItems.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mItems.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getDropDownView(int position, View view, ViewGroup parent) {
+            if (view == null || !view.getTag().toString().equals("DROPDOWN")) {
+                view = getLayoutInflater(null).inflate(R.layout.toolbar_spinner_item_dropdown, parent, false);
+                view.setTag("DROPDOWN");
+            }
+
+            TextView textView = (TextView) view.findViewById(android.R.id.text1);
+            textView.setText(getTitle(position));
+
+            return view;
+        }
+
+        @Override
+        public View getView(int position, View view, ViewGroup parent) {
+            if (view == null || !view.getTag().toString().equals("NON_DROPDOWN")) {
+                view = getLayoutInflater(null).inflate(R.layout.
+                        toolbar_spinner_item_actionbar, parent, false);
+                view.setTag("NON_DROPDOWN");
+            }
+            TextView textView = (TextView) view.findViewById(android.R.id.text1);
+            textView.setText(getTitle(position));
+            return view;
+        }
+
+        private String getTitle(int position) {
+            return position >= 0 && position < mItems.size() ? mItems.get(position) : "";
+        }
     }
 }
