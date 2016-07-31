@@ -22,7 +22,7 @@ import java.util.Locale;
 /**
  * Created by Suleiman19 on 10/22/15.
  */
-public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.MyItemHolder> {
 
     private final ArrayList<String> albumList;
     Context context;
@@ -36,8 +36,8 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RecyclerView.ViewHolder viewHolder;
+    public MyItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        MyItemHolder viewHolder;
         View v;
         v = LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.album_view, parent, false);
@@ -46,37 +46,73 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(MyItemHolder holder, int position) {
         ArrayList<ImageModel> imageModels = data.get(albumList.get(position));
         Glide.with(context).load(imageModels.get(0).getUrl())
                 .thumbnail(0.5f)
                 .centerCrop()
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                .into(((MyItemHolder) holder).imageViewLarge);
+                .into(holder.imageViewLarge);
         Glide.with(context).load(imageModels.get(0).getUrl())
                 .thumbnail(0.5f)
                 .centerCrop()
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                .into(((MyItemHolder) holder).imageViewTop);
-        if (imageModels.size() > 1)
+                .into(holder.imageViewTop);
+        if (imageModels.size() > 1) {
             Glide.with(context).load(imageModels.get(1).getUrl())
                     .thumbnail(0.5f)
                     .centerCrop()
                     .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .into(((MyItemHolder) holder).imageViewBottom);
-        ((MyItemHolder) holder).albumName.setText(Utils.getName(albumList.get(position)));
-        ((MyItemHolder) holder).albumSize.setText(String.format(Locale.US, "%d %s", imageModels.size(), context.getResources().getString(R.string.photos)));
+                    .into(holder.imageViewBottom);
+        } else {
+            holder.imageViewBottom.setImageDrawable(null);
+        }
+        holder.albumName.setText(Utils.getName(albumList.get(position)));
+        holder.albumSize.setText(String.format(Locale.US, "%d %s", imageModels.size(), context.getResources().getString(R.string.photos)));
         Utils utils = new Utils(context);
         int proportionalHeight;
-        if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+        if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             proportionalHeight = (int) (utils.getScreenWidth() / 1.5);
-        else
-            proportionalHeight = (int) (utils.getScreenWidth() / 3);
+        } else {
+            proportionalHeight = utils.getScreenWidth() / 3;
+        }
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, proportionalHeight); // (width, height)
-        ((MyItemHolder) holder).container.setLayoutParams(params);
+        holder.container.setLayoutParams(params);
+        if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            if (position == 0)
+                holder.container.setPadding(
+                        holder.container.getPaddingLeft(),
+                        holder.container.getPaddingBottom(),
+                        holder.container.getPaddingRight(),
+                        holder.container.getPaddingBottom()
+                );
+        } else {
+            if (position == 0 || position == 1)
+                holder.container.setPadding(
+                        holder.container.getPaddingLeft(),
+                        holder.container.getPaddingBottom(),
+                        holder.container.getPaddingRight(),
+                        holder.container.getPaddingBottom()
+                );
+            if (position % 2 == 0) {
+                holder.container.setPadding(
+                        holder.container.getPaddingLeft(),
+                        holder.container.getPaddingTop(),
+                        holder.container.getPaddingRight() / 2,
+                        holder.container.getPaddingBottom()
+                );
+            } else {
+                holder.container.setPadding(
+                        holder.container.getPaddingLeft() / 2,
+                        holder.container.getPaddingTop(),
+                        holder.container.getPaddingRight(),
+                        holder.container.getPaddingBottom()
+                );
+            }
+        }
     }
 
 
