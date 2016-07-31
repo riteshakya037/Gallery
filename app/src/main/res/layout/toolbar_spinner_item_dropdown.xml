@@ -13,7 +13,8 @@
         android:gravity="center_vertical|start"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:textColor="#ff333333"
+        android:textColor="#ffffffff"
+        android:background="@android:color/black"
         android:textSize="16sp"/>
 
 </LinearLayout>
