@@ -21,4 +21,7 @@ public class AppConstant {
     // supported file formats
     public static final List<String> FILE_EXTN = Arrays.asList("jpg", "jpeg",
             "png");
+
+    public static final String overlayCheckText = "jpegplus.jpg";
+
 }

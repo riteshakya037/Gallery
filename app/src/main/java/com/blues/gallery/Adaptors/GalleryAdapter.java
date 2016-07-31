@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.blues.gallery.Helper.AppConstant;
 import com.blues.gallery.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -20,9 +21,9 @@ import java.util.List;
 public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     Context context;
-    List<ImageModel> data = new ArrayList<>();
+    ArrayList<ImageModel> data = new ArrayList<>();
 
-    public GalleryAdapter(Context context, List<ImageModel> data) {
+    public GalleryAdapter(Context context, ArrayList<ImageModel> data) {
         this.context = context;
         this.data = data;
     }
@@ -46,6 +47,12 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(((MyItemHolder) holder).mImg);
+        if (data.get(position).getName().equals(AppConstant.overlayCheckText)) {
+            System.out.println("data = " + data.get(position).getName());
+            ((MyItemHolder) holder).overlay.setVisibility(View.VISIBLE);
+        } else {
+            ((MyItemHolder) holder).overlay.setVisibility(View.GONE);
+        }
 
     }
 
@@ -54,16 +61,22 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return data.size();
     }
 
-    public void getData(ArrayList<ImageModel> newData) {
+    public void updateData(ArrayList<ImageModel> newData) {
         this.data = newData;
+    }
+
+    public ArrayList<ImageModel> getData() {
+        return data;
     }
 
     public static class MyItemHolder extends RecyclerView.ViewHolder {
         ImageView mImg;
+        ImageView overlay;
 
         public MyItemHolder(View itemView) {
             super(itemView);
             mImg = (ImageView) itemView.findViewById(R.id.item_img);
+            overlay = (ImageView) itemView.findViewById(R.id.item_overlay);
         }
 
     }

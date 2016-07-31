@@ -19,6 +19,7 @@ import com.blues.gallery.Adaptors.ImageModel;
 import com.blues.gallery.BottomSheet.BottomSheet;
 import com.blues.gallery.CustomViews.MultiViewPager;
 import com.blues.gallery.EventHandlers.ZoomOutPageTransformer;
+import com.blues.gallery.Helper.AppConstant;
 import com.blues.gallery.Helper.Utils;
 import com.blues.gallery.R;
 
@@ -26,6 +27,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 public class CarouselActivity extends AppCompatActivity implements View.OnClickListener, ViewPager.OnPageChangeListener {
     public ArrayList<ImageModel> data = new ArrayList<>();
@@ -46,7 +48,15 @@ public class CarouselActivity extends AppCompatActivity implements View.OnClickL
 
         data = getIntent().getParcelableArrayListExtra("data");
         pos = getIntent().getIntExtra("pos", 0);
-
+        ImageModel currentClicked = data.get(pos);
+        Iterator<ImageModel> iterator = data.iterator();
+        while (iterator.hasNext()) {
+            ImageModel next = iterator.next();
+            if (next.getName().equals(AppConstant.overlayCheckText)) {
+                iterator.remove();
+            }
+        }
+        pos = data.indexOf(currentClicked);
         pager = (MultiViewPager) findViewById(R.id.pager);
 
         final FragmentStatePagerAdapter adapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {

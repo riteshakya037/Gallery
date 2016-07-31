@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,11 +22,13 @@ import android.widget.BaseAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.blues.gallery.Adaptors.GalleryAdapter;
 import com.blues.gallery.Adaptors.ImageModel;
 import com.blues.gallery.CustomViews.NDSpinner;
 import com.blues.gallery.EventHandlers.RecyclerItemClickListener;
+import com.blues.gallery.Helper.AppConstant;
 import com.blues.gallery.Helper.Utils;
 import com.blues.gallery.R;
 
@@ -112,10 +115,14 @@ public class MomentsFragment extends Fragment {
 
                         @Override
                         public void onItemClick(View view, int position) {
-                            Intent intent = new Intent(getContext(), CarouselActivity.class);
-                            intent.putParcelableArrayListExtra("data", newData);
-                            intent.putExtra("pos", position);
-                            startActivity(intent);
+                            if (newData.get(position).getName().equals(AppConstant.overlayCheckText)) {
+                                Toast.makeText(getActivity(), "Test", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Intent intent = new Intent(getContext(), CarouselActivity.class);
+                                intent.putParcelableArrayListExtra("data", mAdapter.getData());
+                                intent.putExtra("pos", position);
+                                startActivity(intent);
+                            }
 
                         }
                     }));
@@ -125,6 +132,17 @@ public class MomentsFragment extends Fragment {
         return layout;
     }
 
+    private boolean appInstalledOrNot(String uri) {
+        PackageManager pm = getActivity().getPackageManager();
+        boolean app_installed;
+        try {
+            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+            app_installed = true;
+        } catch (PackageManager.NameNotFoundException e) {
+            app_installed = false;
+        }
+        return app_installed;
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -182,7 +200,7 @@ public class MomentsFragment extends Fragment {
                         newData.add(imageModel);
 
                 }
-                mAdapter.getData(newData);
+                mAdapter.updateData(newData);
                 mAdapter.notifyDataSetChanged();
                 mRecyclerView.scrollToPosition(0);
             }
@@ -211,7 +229,7 @@ public class MomentsFragment extends Fragment {
                         newData.add(imageModel);
 
                 }
-                mAdapter.getData(newData);
+                mAdapter.updateData(newData);
                 mAdapter.notifyDataSetChanged();
                 mRecyclerView.scrollToPosition(0);
             }
@@ -238,7 +256,7 @@ public class MomentsFragment extends Fragment {
                 switch (items) {
                     case "ALL":
                         newData = data;
-                        mAdapter.getData(newData);
+                        mAdapter.updateData(newData);
                         mAdapter.notifyDataSetChanged();
                         mRecyclerView.scrollToPosition(0);
                         return;
@@ -267,7 +285,7 @@ public class MomentsFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
+     * <p>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
