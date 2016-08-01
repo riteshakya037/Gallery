@@ -53,6 +53,7 @@ public class MomentsFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private NDSpinner spinner;
     private ArrayList<ImageModel> newData;
+    private boolean fragmentCheck;
 
     public MomentsFragment() {
         // Required empty public constructor
@@ -74,10 +75,11 @@ public class MomentsFragment extends Fragment {
             for (ArrayList<ImageModel> IMG : IMGS.values()) {
                 data.addAll(IMG);
             }
+            fragmentCheck = true;
         } else {
             data.addAll(IMGS.get(ARG_ALBUM_NAME));
             getActivity().setTitle("ALBUMS");
-
+            fragmentCheck = false;
         }
     }
 
@@ -107,7 +109,7 @@ public class MomentsFragment extends Fragment {
             mRecyclerView.setHasFixedSize(true);
 
 
-            mAdapter = new GalleryAdapter(getActivity(), data);
+            mAdapter = new GalleryAdapter(getActivity(), data, fragmentCheck);
             mRecyclerView.setAdapter(mAdapter);
 
             mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
@@ -115,12 +117,13 @@ public class MomentsFragment extends Fragment {
 
                         @Override
                         public void onItemClick(View view, int position) {
-                            if (newData.get(position).getName().equals(AppConstant.overlayCheckText)) {
-                                Toast.makeText(getActivity(), "Test", Toast.LENGTH_SHORT).show();
+                            if (newData.get(position).getName().equals(AppConstant.overlayCheckText) && fragmentCheck) {
+                                Toast.makeText(getActivity(), "Test", Toast.LENGTH_SHORT).show();//todo
                             } else {
                                 Intent intent = new Intent(getContext(), CarouselActivity.class);
                                 intent.putParcelableArrayListExtra("data", mAdapter.getData());
                                 intent.putExtra("pos", position);
+                                intent.putExtra("overlayCheck", fragmentCheck);
                                 startActivity(intent);
                             }
 
@@ -200,7 +203,7 @@ public class MomentsFragment extends Fragment {
                         newData.add(imageModel);
 
                 }
-                mAdapter.updateData(newData);
+                mAdapter.updateData(newData, fragmentCheck);
                 mAdapter.notifyDataSetChanged();
                 mRecyclerView.scrollToPosition(0);
             }
@@ -229,7 +232,7 @@ public class MomentsFragment extends Fragment {
                         newData.add(imageModel);
 
                 }
-                mAdapter.updateData(newData);
+                mAdapter.updateData(newData, fragmentCheck);
                 mAdapter.notifyDataSetChanged();
                 mRecyclerView.scrollToPosition(0);
             }
@@ -256,7 +259,7 @@ public class MomentsFragment extends Fragment {
                 switch (items) {
                     case "ALL":
                         newData = data;
-                        mAdapter.updateData(newData);
+                        mAdapter.updateData(newData, fragmentCheck);
                         mAdapter.notifyDataSetChanged();
                         mRecyclerView.scrollToPosition(0);
                         return;
@@ -285,7 +288,7 @@ public class MomentsFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
+     * <p/>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.

@@ -48,15 +48,18 @@ public class CarouselActivity extends AppCompatActivity implements View.OnClickL
 
         data = getIntent().getParcelableArrayListExtra("data");
         pos = getIntent().getIntExtra("pos", 0);
+        boolean overlayCheck = getIntent().getBooleanExtra("overlayCheck", false);
         ImageModel currentClicked = data.get(pos);
-        Iterator<ImageModel> iterator = data.iterator();
-        while (iterator.hasNext()) {
-            ImageModel next = iterator.next();
-            if (next.getName().equals(AppConstant.overlayCheckText)) {
-                iterator.remove();
+        if (overlayCheck) {
+            Iterator<ImageModel> iterator = data.iterator();
+            while (iterator.hasNext()) {
+                ImageModel next = iterator.next();
+                if (next.getName().equals(AppConstant.overlayCheckText)) {
+                    iterator.remove();
+                }
             }
+            pos = data.indexOf(currentClicked);
         }
-        pos = data.indexOf(currentClicked);
         pager = (MultiViewPager) findViewById(R.id.pager);
 
         final FragmentStatePagerAdapter adapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {

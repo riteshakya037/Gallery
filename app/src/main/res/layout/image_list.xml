@@ -15,9 +15,10 @@
 
     <ImageView
         android:id="@+id/item_overlay"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_gravity="bottom|end"
+        android:background="@android:color/white"
         android:src="@drawable/ic_overlay"
         android:visibility="invisible" />
 </FrameLayout>

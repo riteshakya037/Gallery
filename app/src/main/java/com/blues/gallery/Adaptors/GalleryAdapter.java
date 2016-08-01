@@ -2,8 +2,11 @@ package com.blues.gallery.Adaptors;
 
 import android.content.ClipData;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Vibrator;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -24,10 +27,12 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
 
     Context context;
     ArrayList<ImageModel> data = new ArrayList<>();
+    private boolean overlayCheck;
 
-    public GalleryAdapter(Context context, ArrayList<ImageModel> data) {
+    public GalleryAdapter(Context context, ArrayList<ImageModel> data, boolean overlayCheck) {
         this.context = context;
         this.data = data;
+        this.overlayCheck = overlayCheck;
     }
 
 
@@ -49,8 +54,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(holder.mImg);
-        if (data.get(position).getName().equals(AppConstant.overlayCheckText)) {
-            System.out.println("data = " + data.get(position).getName());
+        if (data.get(position).getName().equals(AppConstant.overlayCheckText) && overlayCheck) {
             holder.overlay.setVisibility(View.VISIBLE);
         } else {
             holder.overlay.setVisibility(View.GONE);
@@ -64,6 +68,34 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
                 return true;
             }
         });
+//        final int longClickDuration = 300;
+//        final boolean[] isLongPress = {false};
+//
+//        holder.imageHolder.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(final View view, MotionEvent event) {
+//                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//                    isLongPress[0] = true;
+//                    Handler handler = new Handler();
+//                    handler.postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            if (isLongPress[0]) {
+////                                Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+////                                vibrator.vibrate(100);
+//                                // set your code here
+//                                ClipData data = ClipData.newPlainText("", "");
+//                                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+//                                view.startDrag(data, shadowBuilder, view, 0);
+//                            }
+//                        }
+//                    }, longClickDuration);
+//                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+//                    isLongPress[0] = false;
+//                }
+//                return true;
+//            }
+//        });
     }
 
     @Override
@@ -71,8 +103,9 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
         return data.size();
     }
 
-    public void updateData(ArrayList<ImageModel> newData) {
+    public void updateData(ArrayList<ImageModel> newData, boolean overlayCheck) {
         this.data = newData;
+        this.overlayCheck = overlayCheck;
     }
 
     public ArrayList<ImageModel> getData() {
