@@ -30,13 +30,11 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
 
     Context context;
     ArrayList<ImageModel> data = new ArrayList<>();
-    private boolean overlayCheck;
     private Listener mListener;
 
-    public GalleryAdapter(Context context, ArrayList<ImageModel> data, boolean overlayCheck, Listener listener) {
+    public GalleryAdapter(Context context, ArrayList<ImageModel> data,  Listener listener) {
         this.context = context;
         this.data = data;
-        this.overlayCheck = overlayCheck;
         this.mListener = listener;
     }
 
@@ -59,7 +57,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(holder.mImg);
-        if (data.get(position).getName().equals(AppConstant.overlayCheckText) && overlayCheck) {
+        if (data.get(position).getName().equals(AppConstant.overlayCheckText)) {
             holder.overlay.setVisibility(View.VISIBLE);
         } else {
             holder.overlay.setVisibility(View.GONE);
@@ -133,9 +131,8 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
         return data.get(position);
     }
 
-    public void updateData(ArrayList<ImageModel> newData, boolean overlayCheck) {
+    public void updateData(ArrayList<ImageModel> newData) {
         this.data = newData;
-        this.overlayCheck = overlayCheck;
     }
 
     public ArrayList<ImageModel> getData() {
@@ -210,7 +207,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
                         ArrayList<ImageModel> customListTarget = adapterTarget.getData();
                         if (!customListTarget.contains(customList)) {
                             customListTarget.add(customList);
-                            adapterTarget.updateData(customListTarget, overlayCheck);
+                            adapterTarget.updateData(customListTarget);
                             adapterTarget.notifyDataSetChanged();
                         }
                         if (adapterTarget.getItemCount() < 1) {
@@ -235,7 +232,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
 
                         momentImageView.item_check.setVisibility(View.INVISIBLE);
                         customListSource.remove(positionSource);
-                        adapterSource.updateData(customListSource, overlayCheck);
+                        adapterSource.updateData(customListSource);
                         adapterSource.notifyDataSetChanged();
                         if (adapterSource.getItemCount() < 1) {
                             mListener.setEmptyList(true);

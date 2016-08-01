@@ -129,7 +129,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         gridLayoutManager.setAutoMeasureEnabled(true);
         containerRecycle.setLayoutManager(gridLayoutManager);
         containerRecycle.setHasFixedSize(true);
-        galleryAdapter = new GalleryAdapter(getActivity(), new ArrayList<ImageModel>(), fragmentCheck, this);
+        galleryAdapter = new GalleryAdapter(getActivity(), new ArrayList<ImageModel>(), this);
         containerRecycle.setAdapter(galleryAdapter);
         containerRecycle.setOnDragListener(galleryAdapter.getDragInstance());
     }
@@ -175,7 +175,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setHasFixedSize(true);
 
-        mAdapter = new GalleryAdapter(getActivity(), data, fragmentCheck, this);
+        mAdapter = new GalleryAdapter(getActivity(), data, this);
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
@@ -267,7 +267,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
                         newData.add(imageModel);
 
                 }
-                mAdapter.updateData(newData, fragmentCheck);
+                mAdapter.updateData(newData);
                 mAdapter.notifyDataSetChanged();
                 mRecyclerView.scrollToPosition(0);
             }
@@ -296,7 +296,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
                         newData.add(imageModel);
 
                 }
-                mAdapter.updateData(newData, fragmentCheck);
+                mAdapter.updateData(newData);
                 mAdapter.notifyDataSetChanged();
                 mRecyclerView.scrollToPosition(0);
             }
@@ -328,7 +328,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
                 switch (items) {
                     case "ALL":
                         newData = data;
-                        mAdapter.updateData(newData, fragmentCheck);
+                        mAdapter.updateData(newData);
                         mAdapter.notifyDataSetChanged();
                         mRecyclerView.scrollToPosition(0);
                         if (fragmentCheck) {
