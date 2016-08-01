@@ -22,12 +22,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blues.gallery.Adaptors.GalleryAdapter;
@@ -42,7 +41,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 import static com.blues.gallery.Activity.DummyActivity.IMGS;
@@ -156,9 +154,10 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         spinner = (NDSpinner) toolbar.findViewById(R.id.spinner_nav);
         spinner.setVisibility(View.VISIBLE);
-        CustomSpinnerAdaptor spinnerAdapter = new CustomSpinnerAdaptor();
-        spinnerAdapter.addItems(Arrays.asList(getResources().getStringArray(R.array.spinner_list_item_array)));
-        spinner.setAdapter(spinnerAdapter);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getActivity(),
+                R.layout.toolbar_spinner_item_actionbar, Arrays.asList(getResources().getStringArray(R.array.spinner_list_item_array)));
+        dataAdapter.setDropDownViewResource(R.layout.toolbar_spinner_item_dropdown);
+        spinner.setAdapter(dataAdapter);
 
         SpinnerInteractionListener listener = new SpinnerInteractionListener();
         spinner.setOnTouchListener(listener);
@@ -379,55 +378,4 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         void onFragmentInteraction(Uri uri);
     }
 
-    private class CustomSpinnerAdaptor extends BaseAdapter {
-        private List<String> mItems = new ArrayList<>();
-
-        public void addItems(List<String> yourObjectList) {
-            mItems.addAll(yourObjectList);
-        }
-
-        @Override
-        public int getCount() {
-            return mItems.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mItems.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getDropDownView(int position, View view, ViewGroup parent) {
-            if (view == null || !view.getTag().toString().equals("DROPDOWN")) {
-                view = getLayoutInflater(null).inflate(R.layout.toolbar_spinner_item_dropdown, parent, false);
-                view.setTag("DROPDOWN");
-            }
-
-            TextView textView = (TextView) view.findViewById(android.R.id.text1);
-            textView.setText(getTitle(position));
-
-            return view;
-        }
-
-        @Override
-        public View getView(int position, View view, ViewGroup parent) {
-            if (view == null || !view.getTag().toString().equals("NON_DROPDOWN")) {
-                view = getLayoutInflater(null).inflate(R.layout.
-                        toolbar_spinner_item_actionbar, parent, false);
-                view.setTag("NON_DROPDOWN");
-            }
-            TextView textView = (TextView) view.findViewById(android.R.id.text1);
-            textView.setText(getTitle(position));
-            return view;
-        }
-
-        private String getTitle(int position) {
-            return position >= 0 && position < mItems.size() ? mItems.get(position) : "";
-        }
-    }
 }
