@@ -5,10 +5,13 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -28,11 +31,13 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
     Context context;
     ArrayList<ImageModel> data = new ArrayList<>();
     private boolean overlayCheck;
+    private Listener mListener;
 
-    public GalleryAdapter(Context context, ArrayList<ImageModel> data, boolean overlayCheck) {
+    public GalleryAdapter(Context context, ArrayList<ImageModel> data, boolean overlayCheck, Listener listener) {
         this.context = context;
         this.data = data;
         this.overlayCheck = overlayCheck;
+        this.mListener = listener;
     }
 
 
@@ -59,6 +64,8 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
         } else {
             holder.overlay.setVisibility(View.GONE);
         }
+        holder.imageHolder.setTag(position);
+        holder.imageHolder.setContentDescription(data.get(position).getName());
         holder.imageHolder.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -68,6 +75,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
                 return true;
             }
         });
+
 //        final int longClickDuration = 300;
 //        final boolean[] isLongPress = {false};
 //
@@ -103,6 +111,28 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
         return data.size();
     }
 
+    public DragListener getDragInstance() {
+        if (mListener != null) {
+            return new DragListener(mListener);
+        } else {
+            Log.e("Route Adapter: ", "Initialize listener first!");
+            return null;
+        }
+    }
+
+    public void clearData() {
+        data.clear();
+        this.notifyDataSetChanged();
+    }
+
+    public interface Listener {
+        void setEmptyList(boolean visibility);
+    }
+
+    public ImageModel getItem(int position) {
+        return data.get(position);
+    }
+
     public void updateData(ArrayList<ImageModel> newData, boolean overlayCheck) {
         this.data = newData;
         this.overlayCheck = overlayCheck;
@@ -116,15 +146,123 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
         FrameLayout imageHolder;
         ImageView mImg;
         ImageView overlay;
+        CheckBox item_check;
 
         public MyItemHolder(View itemView) {
             super(itemView);
             mImg = (ImageView) itemView.findViewById(R.id.item_img);
             overlay = (ImageView) itemView.findViewById(R.id.item_overlay);
             imageHolder = (FrameLayout) itemView.findViewById(R.id.imageHolder);
+            item_check = (CheckBox) itemView.findViewById(R.id.item_check);
         }
 
     }
 
+    public class DragListener implements View.OnDragListener {
 
+        boolean isDropped = false;
+        Listener mListener;
+
+        public DragListener(Listener listener) {
+            this.mListener = listener;
+        }
+
+        @Override
+        public boolean onDrag(View v, DragEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case DragEvent.ACTION_DRAG_STARTED:
+                    break;
+
+                case DragEvent.ACTION_DRAG_ENTERED:
+                    //v.setBackgroundColor(Color.LTGRAY);
+                    break;
+
+                case DragEvent.ACTION_DRAG_EXITED:
+                    //v.setBackgroundColor(Color.YELLOW);
+                    break;
+
+                case DragEvent.ACTION_DROP:
+
+                    isDropped = true;
+                    int positionSource;
+
+                    View viewSource = (View) event.getLocalState();
+                    if ((v.getId() == R.id.containerRecycle && ((View) viewSource.getParent()).getId() == R.id.momentsView)
+                            || v.getId() == R.id.gallerySmall
+                            ) {
+                        RecyclerView target;
+                        if (v.getId() == R.id.gallerySmall) {
+                            target = (RecyclerView)
+                                    v.getRootView().findViewById(R.id.containerRecycle);
+                        } else {
+                            target = (RecyclerView) v;
+                        }
+                        RecyclerView source = (RecyclerView) viewSource.getParent();
+                        GalleryAdapter adapterSource = (GalleryAdapter) source.getAdapter();
+                        positionSource = (int) viewSource.getTag();
+                        MyItemHolder momentImageView = (MyItemHolder) source.findViewHolderForAdapterPosition(positionSource);
+//                        momentImageView.item_check.setVisibility(View.VISIBLE);
+
+                        ImageModel customList = adapterSource.getData().get(positionSource);
+
+                        GalleryAdapter adapterTarget = (GalleryAdapter) target.getAdapter();
+                        ArrayList<ImageModel> customListTarget = adapterTarget.getData();
+                        if (!customListTarget.contains(customList)) {
+                            customListTarget.add(customList);
+                            adapterTarget.updateData(customListTarget, overlayCheck);
+                            adapterTarget.notifyDataSetChanged();
+                        }
+                        if (adapterTarget.getItemCount() < 1) {
+                            mListener.setEmptyList(true);
+                        }
+
+                        if (v.getId() == R.id.gallerySmall) {
+                            mListener.setEmptyList(false);
+                        }
+                    } else if (((View) viewSource.getParent()).getId() == R.id.containerRecycle
+                            && v.getId() == R.id.dumpLocation) {
+                        RecyclerView source = (RecyclerView) viewSource.getParent();
+                        GalleryAdapter adapterSource = (GalleryAdapter) source.getAdapter();
+                        positionSource = (int) viewSource.getTag();
+
+                        ArrayList<ImageModel> customListSource = adapterSource.getData();
+
+                        ImageModel imageToRemove = customListSource.get(positionSource);
+                        RecyclerView momentView = (RecyclerView) v.getRootView().findViewById(R.id.momentsView);
+                        GalleryAdapter momentAdapter = (GalleryAdapter) momentView.getAdapter();
+                        MyItemHolder momentImageView = (MyItemHolder) momentView.findViewHolderForAdapterPosition(momentAdapter.getData().indexOf(imageToRemove));
+
+                        momentImageView.item_check.setVisibility(View.INVISIBLE);
+                        customListSource.remove(positionSource);
+                        adapterSource.updateData(customListSource, overlayCheck);
+                        adapterSource.notifyDataSetChanged();
+                        if (adapterSource.getItemCount() < 1) {
+                            mListener.setEmptyList(true);
+                        }
+
+                        if (v.getId() == R.id.gallerySmall) {
+                            mListener.setEmptyList(false);
+                        }
+                    }
+
+                    break;
+
+                case DragEvent.ACTION_DRAG_ENDED:
+                    //v.setBackgroundColor(0);
+                    break;
+
+                default:
+                    break;
+            }
+//
+//            if (!isDropped) {
+//                View vw = (View) event.getLocalState();
+//                vw.setVisibility(View.VISIBLE);
+//            }
+
+            return true;
+        }
+
+    }
 }

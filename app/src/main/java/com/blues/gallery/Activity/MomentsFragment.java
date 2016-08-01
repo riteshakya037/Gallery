@@ -4,15 +4,19 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +25,8 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,13 +48,18 @@ import java.util.Locale;
 import static com.blues.gallery.Activity.DummyActivity.IMGS;
 
 
-public class MomentsFragment extends Fragment {
+public class MomentsFragment extends Fragment implements GalleryAdapter.Listener {
     GalleryAdapter mAdapter;
     RecyclerView mRecyclerView;
+    RecyclerView containerRecycle;
+    GalleryAdapter galleryAdapter;
+    LinearLayout gallerySmall;
+    ImageView dumpSpace;
+    LinearLayout containerView;
+
     private static String ARG_ALBUM_NAME = null;
 
     ArrayList<ImageModel> data = new ArrayList<>();
-    // TODO: Rename and change types of parameters
 
     private OnFragmentInteractionListener mListener;
     private NDSpinner spinner;
@@ -69,7 +80,6 @@ public class MomentsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils utils = new Utils(getActivity());
         if (ARG_ALBUM_NAME == null) {
             getActivity().setTitle("MOMENTS");
             for (ArrayList<ImageModel> IMG : IMGS.values()) {
@@ -89,51 +99,105 @@ public class MomentsFragment extends Fragment {
         View layout = inflater.inflate(R.layout.fragment_moments, container, false);
         if (mRecyclerView == null) {
             newData = data;
-            Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-            spinner = (NDSpinner) toolbar.findViewById(R.id.spinner_nav);
-            spinner.setVisibility(View.VISIBLE);
-            CustomSpinnerAdaptor spinnerAdapter = new CustomSpinnerAdaptor();
-            spinnerAdapter.addItems(Arrays.asList(getResources().getStringArray(R.array.spinner_list_item_array)));
-            spinner.setAdapter(spinnerAdapter);
-
-            SpinnerInteractionListener listener = new SpinnerInteractionListener();
-            spinner.setOnTouchListener(listener);
-
-            spinner.setOnItemSelectedListener(listener);
-
-            mRecyclerView = (RecyclerView) layout.findViewById(R.id.momentsView);
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-            else
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-            mRecyclerView.setHasFixedSize(true);
-
-
-            mAdapter = new GalleryAdapter(getActivity(), data, fragmentCheck);
-            mRecyclerView.setAdapter(mAdapter);
-
-            mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
-                    new RecyclerItemClickListener.OnItemClickListener() {
-
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            if (newData.get(position).getName().equals(AppConstant.overlayCheckText) && fragmentCheck) {
-                                Toast.makeText(getActivity(), "Test", Toast.LENGTH_SHORT).show();//todo
-                            } else {
-                                Intent intent = new Intent(getContext(), CarouselActivity.class);
-                                intent.putParcelableArrayListExtra("data", mAdapter.getData());
-                                intent.putExtra("pos", position);
-                                intent.putExtra("overlayCheck", fragmentCheck);
-                                startActivity(intent);
-                            }
-
-                        }
-                    }));
-
+            initializeSpinner();
+            initializeRecyclerView(layout);
+            initializeContainerRecyclerView(layout);
+            initializeSmallGalleryButton(layout);
+            initializeDump(layout);
+        }
+        containerView = (LinearLayout) layout.findViewById(R.id.container);
+        if (fragmentCheck) {
+            containerView.setVisibility(View.VISIBLE);
+        } else {
+            containerView.setVisibility(View.GONE);
         }
         // Inflate the layout for this fragment
         return layout;
     }
+
+
+    private void initializeContainerRecyclerView(View layout) {
+        containerRecycle = (RecyclerView) layout.findViewById(R.id.containerRecycle);
+        Resources r = getResources();
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 128, r.getDisplayMetrics());
+        Utils utils = new Utils(getActivity());
+        GridLayoutManager gridLayoutManager;
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT || spinner.getSelectedItemPosition() != 0)
+            gridLayoutManager = new GridLayoutManager(getActivity(), (int) (utils.getScreenWidth() / px));
+        else
+            gridLayoutManager = new GridLayoutManager(getActivity(), (int) (utils.getScreenWidth() / px - 1));
+        gridLayoutManager.setAutoMeasureEnabled(true);
+        containerRecycle.setLayoutManager(gridLayoutManager);
+        containerRecycle.setHasFixedSize(true);
+        galleryAdapter = new GalleryAdapter(getActivity(), new ArrayList<ImageModel>(), fragmentCheck, this);
+        containerRecycle.setAdapter(galleryAdapter);
+        containerRecycle.setOnDragListener(galleryAdapter.getDragInstance());
+    }
+
+    private void initializeDump(View layout) {
+        dumpSpace = (ImageView) layout.findViewById(R.id.dumpLocation);
+        dumpSpace.setOnDragListener(galleryAdapter.getDragInstance());
+    }
+
+    private void initializeSmallGalleryButton(View layout) {
+        gallerySmall = (LinearLayout) layout.findViewById(R.id.gallerySmall);
+        gallerySmall.setOnDragListener(galleryAdapter.getDragInstance());
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+    }
+
+    private void initializeSpinner() {
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        spinner = (NDSpinner) toolbar.findViewById(R.id.spinner_nav);
+        spinner.setVisibility(View.VISIBLE);
+        CustomSpinnerAdaptor spinnerAdapter = new CustomSpinnerAdaptor();
+        spinnerAdapter.addItems(Arrays.asList(getResources().getStringArray(R.array.spinner_list_item_array)));
+        spinner.setAdapter(spinnerAdapter);
+
+        SpinnerInteractionListener listener = new SpinnerInteractionListener();
+        spinner.setOnTouchListener(listener);
+
+        spinner.setOnItemSelectedListener(listener);
+    }
+
+    private void initializeRecyclerView(View layout) {
+
+        mRecyclerView = (RecyclerView) layout.findViewById(R.id.momentsView);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        else
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        mRecyclerView.setHasFixedSize(true);
+
+        mAdapter = new GalleryAdapter(getActivity(), data, fragmentCheck, this);
+        mRecyclerView.setAdapter(mAdapter);
+
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
+                new RecyclerItemClickListener.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        if (newData.get(position).getName().equals(AppConstant.overlayCheckText) && fragmentCheck) {
+                            Toast.makeText(getActivity(), "Test", Toast.LENGTH_SHORT).show();//todo
+                        } else {
+                            Intent intent = new Intent(getContext(), CarouselActivity.class);
+                            intent.putParcelableArrayListExtra("data", mAdapter.getData());
+                            intent.putExtra("pos", position);
+                            intent.putExtra("overlayCheck", fragmentCheck);
+                            startActivity(intent);
+                        }
+
+                    }
+                }));
+
+    }
+
 
     private boolean appInstalledOrNot(String uri) {
         PackageManager pm = getActivity().getPackageManager();
@@ -241,6 +305,11 @@ public class MomentsFragment extends Fragment {
         builder.show();
     }
 
+    @Override
+    public void setEmptyList(boolean visibility) {
+        gallerySmall.setVisibility(visibility ? View.VISIBLE : View.INVISIBLE);
+    }
+
 
     public class SpinnerInteractionListener implements AdapterView.OnItemSelectedListener, View.OnTouchListener {
 
@@ -262,15 +331,27 @@ public class MomentsFragment extends Fragment {
                         mAdapter.updateData(newData, fragmentCheck);
                         mAdapter.notifyDataSetChanged();
                         mRecyclerView.scrollToPosition(0);
+                        if (fragmentCheck) {
+                            containerView.setVisibility(View.VISIBLE);
+                            setEmptyList(true);
+                        }
                         return;
                     case "DATE":
                         createDatePicker("Select Date", 1);
+                        containerView.setVisibility(View.GONE);
+                        galleryAdapter.clearData();
                         return;
                     case "LOCATION":
                         createTextDialog("Select Location", 0);
+                        containerView.setVisibility(View.GONE);
+                        galleryAdapter.clearData();
+
                         return;
                     case "EVENT":
                         createTextDialog("Select Event", 2);
+                        containerView.setVisibility(View.GONE);
+                        galleryAdapter.clearData();
+
                 }
                 userSelect = false;
             }
