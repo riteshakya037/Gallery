@@ -27,6 +27,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
     Context context;
     ArrayList<ImageModel> data = new ArrayList<>();
     private ArrayList<Integer> markedPos;
+    private boolean smallerIcon = false;
     private Listener mListener;
 
     public GalleryAdapter(Context context, ArrayList<ImageModel> data, ArrayList<Integer> markedPos, Listener listener) {
@@ -36,15 +37,31 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
         this.mListener = listener;
     }
 
+    public GalleryAdapter(Context context, ArrayList<ImageModel> data, ArrayList<Integer> markedPos, boolean smallerIcon, Listener listener) {
+        this.context = context;
+        this.data = data;
+        this.markedPos = markedPos;
+        this.smallerIcon = smallerIcon;
+        this.mListener = listener;
+    }
+
 
     @Override
     public MyItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         MyItemHolder viewHolder;
-        View v;
-        v = LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.image_list, parent, false);
-        viewHolder = new MyItemHolder(v);
-        return viewHolder;
+        if (smallerIcon) {
+            View v;
+            v = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.image_list_small, parent, false);
+            viewHolder = new MyItemHolder(v);
+            return viewHolder;
+        }else {
+            View v;
+            v = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.image_list, parent, false);
+            viewHolder = new MyItemHolder(v);
+            return viewHolder;
+        }
     }
 
     @Override
@@ -233,7 +250,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
                             mListener.setEmptyList(false);
                         }
                     } else if (((View) viewSource.getParent()).getId() == R.id.containerRecycle
-                            && v.getId() == R.id.dumpLocation) {
+                            && v.getId() != R.id.containerRecycle) {
                         RecyclerView source = (RecyclerView) viewSource.getParent();
                         GalleryAdapter adapterSource = (GalleryAdapter) source.getAdapter();
                         positionSource = (int) viewSource.getTag();

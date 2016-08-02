@@ -13,12 +13,16 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,17 +60,21 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
     ImageView dumpSpace;
     LinearLayout containerView;
     LinearLayoutManager linearLayoutManager;
+    ImageView threeDotView;
+
     private static String ARG_ALBUM_NAME = null;
     ArrayList<Integer> currentSourceList = new ArrayList<>();
     ArrayList<ImageModel> data = new ArrayList<>();
     ArrayList<ImageModel> containerData = new ArrayList<>();
-
-    private OnFragmentInteractionListener mListener;
-    private NDSpinner spinner;
-    private ArrayList<ImageModel> newData;
     private boolean fragmentCheck;
     private int currentActive = 0;
     private Parcelable posScrolled = null;
+
+
+    private OnFragmentInteractionListener mListener;
+    private NDSpinner spinner;
+
+    private ArrayList<ImageModel> newData;
 
     public MomentsFragment() {
         // Required empty public constructor
@@ -146,6 +154,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         initializeContainerRecyclerView();
         initializeSmallGalleryButton();
         initializeDump();
+        initializeThreeDotView();
         if (fragmentCheck && currentActive == 0) {
             containerView.setVisibility(View.VISIBLE);
         } else {
@@ -161,6 +170,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         gallerySmall = (LinearLayout) layout.findViewById(R.id.gallerySmall);
         dumpSpace = (ImageView) layout.findViewById(R.id.dumpLocation);
         containerView = (LinearLayout) layout.findViewById(R.id.container);
+        threeDotView = (ImageView) layout.findViewById(R.id.threeDotView);
     }
 
     private void initializeSpinner() {
@@ -209,30 +219,65 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
 
     private void initializeContainerRecyclerView() {
         Resources r = getResources();
-        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 128, r.getDisplayMetrics());
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, r.getDisplayMetrics());
         Utils utils = new Utils(getActivity());
         GridLayoutManager gridLayoutManager;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-            gridLayoutManager = new GridLayoutManager(getActivity(), (int) (utils.getScreenWidth() / px));
-        else
             gridLayoutManager = new GridLayoutManager(getActivity(), (int) (utils.getScreenWidth() / px - 1));
+        else
+            gridLayoutManager = new GridLayoutManager(getActivity(), (int) (utils.getScreenWidth() / px - 2));
         gridLayoutManager.setAutoMeasureEnabled(true);
         containerRecycle.setLayoutManager(gridLayoutManager);
         containerRecycle.setHasFixedSize(true);
-        galleryAdapter = new GalleryAdapter(getActivity(), containerData, new ArrayList<Integer>(), this);
+        galleryAdapter = new GalleryAdapter(getActivity(), containerData, new ArrayList<Integer>(), true, this);
         containerRecycle.setAdapter(galleryAdapter);
         containerRecycle.setOnDragListener(galleryAdapter.getDragInstance());
         if (containerData.size() > 0) {
             setEmptyList(false);
+        } else {
+            setEmptyList(true);
         }
     }
 
     private void initializeDump() {
         dumpSpace.setOnDragListener(galleryAdapter.getDragInstance());
+        containerView.setOnDragListener(galleryAdapter.getDragInstance());
+        mRecyclerView.setOnDragListener(galleryAdapter.getDragInstance());
     }
 
     private void initializeSmallGalleryButton() {
         gallerySmall.setOnDragListener(galleryAdapter.getDragInstance());
+    }
+
+    private void initializeThreeDotView() {
+        threeDotView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Context wrapper = new ContextThemeWrapper(getContext(), R.style.PopupMenu);
+                PopupMenu popup = new PopupMenu(wrapper, view);
+                MenuInflater inflater = popup.getMenuInflater();
+                inflater.inflate(R.menu.actions, popup.getMenu());
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.zip:
+                                Toast.makeText(getActivity(), "ZIP", Toast.LENGTH_SHORT).show();
+                                return true;
+                            case R.id.add_keyword:
+                                Toast.makeText(getActivity(), "Add Keyword", Toast.LENGTH_SHORT).show();
+                                return true;
+                            case R.id.share:
+                                Toast.makeText(getActivity(), "Share", Toast.LENGTH_SHORT).show();
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+                popup.show();
+            }
+        });
     }
 
     private boolean appInstalledOrNot(String uri) {
@@ -344,6 +389,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
     @Override
     public void setEmptyList(boolean visibility) {
         gallerySmall.setVisibility(visibility ? View.VISIBLE : View.INVISIBLE);
+        threeDotView.setClickable(!visibility);
     }
 
 

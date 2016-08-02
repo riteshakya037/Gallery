@@ -13,4 +13,7 @@
     <string name="date">Date</string>
     <string name="event">Event</string>
     <string name="drag_and_drop_image">Drag and Drop Image</string>
+    <string name="share">Share</string>
+    <string name="add_keyword">Add Keyword</string>
+    <string name="zip">Zip</string>
 </resources>
