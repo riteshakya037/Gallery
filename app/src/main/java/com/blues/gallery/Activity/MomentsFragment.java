@@ -9,6 +9,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -65,7 +66,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
     private ArrayList<ImageModel> newData;
     private boolean fragmentCheck;
     private int currentActive = 0;
-    private int posScrolled = 0;
+    private Parcelable posScrolled = null;
 
     public MomentsFragment() {
         // Required empty public constructor
@@ -101,7 +102,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         outState.putParcelableArrayList("data", data);
         outState.putParcelableArrayList("containerData", containerData);
         outState.putInt("currentActive", currentActive);
-        outState.putInt("posScrolled", posScrolled);
+        outState.putParcelable("posScrolled", posScrolled);
     }
 
     @Override
@@ -112,14 +113,14 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
             data = savedInstanceState.getParcelableArrayList("data");
             containerData = savedInstanceState.getParcelableArrayList("containerData");
             currentActive = savedInstanceState.getInt("currentActive", currentActive);
-            posScrolled = savedInstanceState.getInt("posScrolled", posScrolled);
+            posScrolled = savedInstanceState.getParcelable("posScrolled");
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        posScrolled = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+        posScrolled = linearLayoutManager.onSaveInstanceState();
         containerData = galleryAdapter.getData();
     }
 
@@ -181,7 +182,9 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new GalleryAdapter(getActivity(), data, this);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.scrollToPosition(posScrolled);
+        if (posScrolled != null) {
+            linearLayoutManager.onRestoreInstanceState(posScrolled);
+        }
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
                 new RecyclerItemClickListener.OnItemClickListener() {
 
@@ -357,15 +360,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
                 String items = spinner.getSelectedItem().toString();
                 switch (items) {
                     case "ALL":
-                        newData = data;
-                        mAdapter.updateData(newData);
-                        mAdapter.notifyDataSetChanged();
-                        mRecyclerView.scrollToPosition(0);
-                        if (fragmentCheck) {
-                            containerView.setVisibility(View.VISIBLE);
-                            setEmptyList(true);
-                        }
-                        currentActive = 0;
+                        resetForAll();
                         return;
                     case "DATE":
                         createDatePicker("Select Date", 1);
@@ -388,6 +383,21 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         public void onNothingSelected(AdapterView<?> adapterView) {
 
         }
+
+    }
+
+    private void resetForAll() {
+        newData = data;
+        mAdapter.updateData(newData);
+        mAdapter.notifyDataSetChanged();
+        mRecyclerView.scrollToPosition(0);
+        if (fragmentCheck) {
+            containerView.setVisibility(View.VISIBLE);
+            setEmptyList(true);
+            linearLayoutManager = (new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+            mRecyclerView.setLayoutManager(linearLayoutManager);
+        }
+        currentActive = 0;
 
     }
 
