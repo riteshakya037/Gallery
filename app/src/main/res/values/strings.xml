@@ -4,15 +4,13 @@
     <string name="drawer_close">Close navigation drawer</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="album">Album</string>
     <string name="moments">Moments</string>
     <string name="local_storage">LOCAL STORAGE</string>
     <string name="photos">PHOTOS</string>
-    <string name="title_activity_dummy">DummyActivity</string>
-    <string name="action_settings">Settings</string>
     <string name="all">All</string>
     <string name="location">Location</string>
     <string name="date">Date</string>
     <string name="event">Event</string>
+    <string name="drag_and_drop_image">Drag and Drop Image</string>
 </resources>

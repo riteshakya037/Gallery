@@ -1,6 +1,5 @@
 package com.blues.gallery.Activity;
 
-import android.content.Context;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,23 +11,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Spinner;
 
 import com.blues.gallery.Adaptors.AlbumAdapter;
 import com.blues.gallery.CustomViews.NDSpinner;
 import com.blues.gallery.EventHandlers.RecyclerItemClickListener;
 import com.blues.gallery.R;
 
-import static com.blues.gallery.Activity.DummyActivity.IMGS;
-
 import java.util.ArrayList;
+
+import static com.blues.gallery.Activity.DummyActivity.IMGS;
 
 public class AlbumFragment extends Fragment {
     AlbumAdapter mAdapter;
     RecyclerView mRecyclerView;
     private ArrayList<String> albumList = new ArrayList<>();
 
-    private OnFragmentInteractionListener mListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,29 +73,6 @@ public class AlbumFragment extends Fragment {
         return layout;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
 
     /**
      * This interface must be implemented by activities that contain this

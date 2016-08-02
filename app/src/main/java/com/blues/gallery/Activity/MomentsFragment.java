@@ -4,12 +4,12 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
@@ -54,15 +54,18 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
     LinearLayout gallerySmall;
     ImageView dumpSpace;
     LinearLayout containerView;
-
+    LinearLayoutManager linearLayoutManager;
     private static String ARG_ALBUM_NAME = null;
 
     ArrayList<ImageModel> data = new ArrayList<>();
+    ArrayList<ImageModel> containerData = new ArrayList<>();
 
     private OnFragmentInteractionListener mListener;
     private NDSpinner spinner;
     private ArrayList<ImageModel> newData;
     private boolean fragmentCheck;
+    private int currentActive = 0;
+    private int posScrolled = 0;
 
     public MomentsFragment() {
         // Required empty public constructor
@@ -92,67 +95,71 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("fragmentCheck", fragmentCheck);
+        outState.putParcelableArrayList("data", data);
+        outState.putParcelableArrayList("containerData", containerData);
+        outState.putInt("currentActive", currentActive);
+        outState.putInt("posScrolled", posScrolled);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            fragmentCheck = savedInstanceState.getBoolean("fragmentCheck", false);
+            data = savedInstanceState.getParcelableArrayList("data");
+            containerData = savedInstanceState.getParcelableArrayList("containerData");
+            currentActive = savedInstanceState.getInt("currentActive", currentActive);
+            posScrolled = savedInstanceState.getInt("posScrolled", posScrolled);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        posScrolled = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+        containerData = galleryAdapter.getData();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_moments, container, false);
-        if (mRecyclerView == null) {
-            newData = data;
-            initializeSpinner();
-            initializeRecyclerView(layout);
-            initializeContainerRecyclerView(layout);
-            initializeSmallGalleryButton(layout);
-            initializeDump(layout);
-        }
-        containerView = (LinearLayout) layout.findViewById(R.id.container);
-        if (fragmentCheck) {
-            containerView.setVisibility(View.VISIBLE);
-        } else {
-            containerView.setVisibility(View.GONE);
-        }
+        newData = data;
+        init(layout);
         // Inflate the layout for this fragment
         return layout;
     }
 
 
-    private void initializeContainerRecyclerView(View layout) {
-        containerRecycle = (RecyclerView) layout.findViewById(R.id.containerRecycle);
-        Resources r = getResources();
-        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 128, r.getDisplayMetrics());
-        Utils utils = new Utils(getActivity());
-        GridLayoutManager gridLayoutManager;
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT || spinner.getSelectedItemPosition() != 0)
-            gridLayoutManager = new GridLayoutManager(getActivity(), (int) (utils.getScreenWidth() / px));
-        else
-            gridLayoutManager = new GridLayoutManager(getActivity(), (int) (utils.getScreenWidth() / px - 1));
-        gridLayoutManager.setAutoMeasureEnabled(true);
-        containerRecycle.setLayoutManager(gridLayoutManager);
-        containerRecycle.setHasFixedSize(true);
-        galleryAdapter = new GalleryAdapter(getActivity(), new ArrayList<ImageModel>(), this);
-        containerRecycle.setAdapter(galleryAdapter);
-        containerRecycle.setOnDragListener(galleryAdapter.getDragInstance());
-    }
-
-    private void initializeDump(View layout) {
-        dumpSpace = (ImageView) layout.findViewById(R.id.dumpLocation);
-        dumpSpace.setOnDragListener(galleryAdapter.getDragInstance());
-    }
-
-    private void initializeSmallGalleryButton(View layout) {
-        gallerySmall = (LinearLayout) layout.findViewById(R.id.gallerySmall);
-        gallerySmall.setOnDragListener(galleryAdapter.getDragInstance());
-    }
-
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    public void onStart() {
+        super.onStart();
+        initializeSpinner();
+        initializeRecyclerView();
+        initializeContainerRecyclerView();
+        initializeSmallGalleryButton();
+        initializeDump();
+        if (fragmentCheck && currentActive == 0) {
+            containerView.setVisibility(View.VISIBLE);
+        } else {
+            containerView.setVisibility(View.GONE);
         }
     }
 
-    private void initializeSpinner() {
+    private void init(View layout) {
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         spinner = (NDSpinner) toolbar.findViewById(R.id.spinner_nav);
+        mRecyclerView = (RecyclerView) layout.findViewById(R.id.momentsView);
+        containerRecycle = (RecyclerView) layout.findViewById(R.id.containerRecycle);
+        gallerySmall = (LinearLayout) layout.findViewById(R.id.gallerySmall);
+        dumpSpace = (ImageView) layout.findViewById(R.id.dumpLocation);
+        containerView = (LinearLayout) layout.findViewById(R.id.container);
+    }
+
+    private void initializeSpinner() {
         spinner.setVisibility(View.VISIBLE);
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getActivity(),
                 R.layout.toolbar_spinner_item_actionbar, Arrays.asList(getResources().getStringArray(R.array.spinner_list_item_array)));
@@ -165,18 +172,16 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         spinner.setOnItemSelectedListener(listener);
     }
 
-    private void initializeRecyclerView(View layout) {
-
-        mRecyclerView = (RecyclerView) layout.findViewById(R.id.momentsView);
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+    private void initializeRecyclerView() {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT || currentActive != 0 || !fragmentCheck)
+            linearLayoutManager = (new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         else
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+            linearLayoutManager = (new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setHasFixedSize(true);
-
         mAdapter = new GalleryAdapter(getActivity(), data, this);
         mRecyclerView.setAdapter(mAdapter);
-
+        mRecyclerView.scrollToPosition(posScrolled);
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
                 new RecyclerItemClickListener.OnItemClickListener() {
 
@@ -191,12 +196,38 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
                             intent.putExtra("overlayCheck", fragmentCheck);
                             startActivity(intent);
                         }
-
                     }
                 }));
 
     }
 
+    private void initializeContainerRecyclerView() {
+        Resources r = getResources();
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 128, r.getDisplayMetrics());
+        Utils utils = new Utils(getActivity());
+        GridLayoutManager gridLayoutManager;
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+            gridLayoutManager = new GridLayoutManager(getActivity(), (int) (utils.getScreenWidth() / px));
+        else
+            gridLayoutManager = new GridLayoutManager(getActivity(), (int) (utils.getScreenWidth() / px - 1));
+        gridLayoutManager.setAutoMeasureEnabled(true);
+        containerRecycle.setLayoutManager(gridLayoutManager);
+        containerRecycle.setHasFixedSize(true);
+        galleryAdapter = new GalleryAdapter(getActivity(), containerData, this);
+        containerRecycle.setAdapter(galleryAdapter);
+        containerRecycle.setOnDragListener(galleryAdapter.getDragInstance());
+        if (containerData.size() > 0) {
+            setEmptyList(false);
+        }
+    }
+
+    private void initializeDump() {
+        dumpSpace.setOnDragListener(galleryAdapter.getDragInstance());
+    }
+
+    private void initializeSmallGalleryButton() {
+        gallerySmall.setOnDragListener(galleryAdapter.getDragInstance());
+    }
 
     private boolean appInstalledOrNot(String uri) {
         PackageManager pm = getActivity().getPackageManager();
@@ -334,22 +365,19 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
                             containerView.setVisibility(View.VISIBLE);
                             setEmptyList(true);
                         }
+                        currentActive = 0;
                         return;
                     case "DATE":
                         createDatePicker("Select Date", 1);
-                        containerView.setVisibility(View.GONE);
-                        galleryAdapter.clearData();
+                        resetLayout(1);
                         return;
                     case "LOCATION":
                         createTextDialog("Select Location", 0);
-                        containerView.setVisibility(View.GONE);
-                        galleryAdapter.clearData();
-
+                        resetLayout(2);
                         return;
                     case "EVENT":
                         createTextDialog("Select Event", 2);
-                        containerView.setVisibility(View.GONE);
-                        galleryAdapter.clearData();
+                        resetLayout(3);
 
                 }
                 userSelect = false;
@@ -361,6 +389,14 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
 
         }
 
+    }
+
+    private void resetLayout(int i) {
+        containerView.setVisibility(View.GONE);
+        galleryAdapter.clearData();
+        currentActive = i;
+        linearLayoutManager = (new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        mRecyclerView.setLayoutManager(linearLayoutManager);
     }
 
     /**

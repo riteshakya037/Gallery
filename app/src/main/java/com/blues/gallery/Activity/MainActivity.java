@@ -37,16 +37,15 @@ public class MainActivity extends AppCompatActivity implements AlbumFragment.OnF
         nvDrawer = (NavigationView) findViewById(R.id.nvView);
         setupDrawerContent(nvDrawer);
         FragmentManager fm = getSupportFragmentManager();
+        mDrawer.addDrawerListener(drawerToggle);
 
-
+        if (savedInstanceState != null) {
+            return;
+        }
         // If the Fragment is non-null, then it is currently being
         // retained across a configuration change.
-        if (fm.getFragments() == null) {
-            mTaskFragment = new AlbumFragment();
-            fm.beginTransaction().replace(R.id.fragContainer, mTaskFragment).commit();
-        }
-
-        mDrawer.addDrawerListener(drawerToggle);
+        mTaskFragment = new AlbumFragment();
+        fm.beginTransaction().replace(R.id.fragContainer, mTaskFragment).commit();
     }
 
     @Override

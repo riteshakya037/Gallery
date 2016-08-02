@@ -16,7 +16,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.blues.gallery.Adaptors.ImageModel;
-import com.blues.gallery.BottomSheet.BottomSheet;
 import com.blues.gallery.CustomViews.MultiViewPager;
 import com.blues.gallery.EventHandlers.ZoomOutPageTransformer;
 import com.blues.gallery.Helper.AppConstant;
@@ -34,7 +33,6 @@ public class CarouselActivity extends AppCompatActivity implements View.OnClickL
     int pos;
     MultiViewPager pager;
 
-    private BottomSheet bottomSheet;
     LinearLayout footer;
     RelativeLayout imageView;
     ImageView threeImage;

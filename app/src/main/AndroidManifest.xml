@@ -15,8 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Activity.MainActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
+            android:name=".Activity.MainActivity" />
         <activity android:name=".Activity.CarouselActivity" />
         <activity
             android:name=".Activity.DummyActivity"

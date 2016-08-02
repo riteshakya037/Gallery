@@ -7,7 +7,9 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/momentsView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:minHeight="200dp"
         android:padding="4dp"
         android:scrollbars="horizontal" />
 
@@ -17,8 +19,9 @@
         android:layout_height="match_parent"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_margin="4dp"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -57,7 +60,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Drag and Drop Image"
+                    android:text="@string/drag_and_drop_image"
                     android:textColor="@android:color/white" />
             </LinearLayout>
 
