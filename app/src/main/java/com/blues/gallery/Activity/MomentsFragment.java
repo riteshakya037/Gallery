@@ -57,7 +57,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
     LinearLayout containerView;
     LinearLayoutManager linearLayoutManager;
     private static String ARG_ALBUM_NAME = null;
-
+    ArrayList<Integer> currentSourceList = new ArrayList<>();
     ArrayList<ImageModel> data = new ArrayList<>();
     ArrayList<ImageModel> containerData = new ArrayList<>();
 
@@ -103,6 +103,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         outState.putParcelableArrayList("containerData", containerData);
         outState.putInt("currentActive", currentActive);
         outState.putParcelable("posScrolled", posScrolled);
+        outState.putIntegerArrayList("currentSourceList", currentSourceList);
     }
 
     @Override
@@ -114,6 +115,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
             containerData = savedInstanceState.getParcelableArrayList("containerData");
             currentActive = savedInstanceState.getInt("currentActive", currentActive);
             posScrolled = savedInstanceState.getParcelable("posScrolled");
+            currentSourceList = savedInstanceState.getIntegerArrayList("currentSourceList");
         }
     }
 
@@ -122,6 +124,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         super.onPause();
         posScrolled = linearLayoutManager.onSaveInstanceState();
         containerData = galleryAdapter.getData();
+        currentSourceList = mAdapter.getMarkedPos();
     }
 
     @Override
@@ -180,7 +183,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
             linearLayoutManager = (new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setHasFixedSize(true);
-        mAdapter = new GalleryAdapter(getActivity(), data, this);
+        mAdapter = new GalleryAdapter(getActivity(), data, currentSourceList, this);
         mRecyclerView.setAdapter(mAdapter);
         if (posScrolled != null) {
             linearLayoutManager.onRestoreInstanceState(posScrolled);
@@ -216,7 +219,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         gridLayoutManager.setAutoMeasureEnabled(true);
         containerRecycle.setLayoutManager(gridLayoutManager);
         containerRecycle.setHasFixedSize(true);
-        galleryAdapter = new GalleryAdapter(getActivity(), containerData, this);
+        galleryAdapter = new GalleryAdapter(getActivity(), containerData, new ArrayList<Integer>(), this);
         containerRecycle.setAdapter(galleryAdapter);
         containerRecycle.setOnDragListener(galleryAdapter.getDragInstance());
         if (containerData.size() > 0) {
@@ -300,7 +303,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
                         newData.add(imageModel);
 
                 }
-                mAdapter.updateData(newData);
+                mAdapter.updateData(newData, new ArrayList<Integer>());
                 mAdapter.notifyDataSetChanged();
                 mRecyclerView.scrollToPosition(0);
             }
@@ -329,7 +332,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
                         newData.add(imageModel);
 
                 }
-                mAdapter.updateData(newData);
+                mAdapter.updateData(newData, new ArrayList<Integer>());
                 mAdapter.notifyDataSetChanged();
                 mRecyclerView.scrollToPosition(0);
             }
@@ -388,13 +391,16 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
 
     private void resetForAll() {
         newData = data;
-        mAdapter.updateData(newData);
+        mAdapter.updateData(newData, currentSourceList);
         mAdapter.notifyDataSetChanged();
         mRecyclerView.scrollToPosition(0);
         if (fragmentCheck) {
             containerView.setVisibility(View.VISIBLE);
             setEmptyList(true);
-            linearLayoutManager = (new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+                linearLayoutManager = (new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+            else
+                linearLayoutManager = (new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
             mRecyclerView.setLayoutManager(linearLayoutManager);
         }
         currentActive = 0;
@@ -405,6 +411,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         containerView.setVisibility(View.GONE);
         galleryAdapter.clearData();
         currentActive = i;
+        currentSourceList = new ArrayList<>();
         linearLayoutManager = (new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         mRecyclerView.setLayoutManager(linearLayoutManager);
     }

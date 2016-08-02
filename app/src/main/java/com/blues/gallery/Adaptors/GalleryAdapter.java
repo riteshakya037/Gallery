@@ -2,13 +2,10 @@ package com.blues.gallery.Adaptors;
 
 import android.content.ClipData;
 import android.content.Context;
-import android.os.Handler;
-import android.os.Vibrator;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -21,7 +18,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Suleiman19 on 10/22/15.
@@ -30,11 +26,13 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
 
     Context context;
     ArrayList<ImageModel> data = new ArrayList<>();
+    private ArrayList<Integer> markedPos;
     private Listener mListener;
 
-    public GalleryAdapter(Context context, ArrayList<ImageModel> data,  Listener listener) {
+    public GalleryAdapter(Context context, ArrayList<ImageModel> data, ArrayList<Integer> markedPos, Listener listener) {
         this.context = context;
         this.data = data;
+        this.markedPos = markedPos;
         this.mListener = listener;
     }
 
@@ -57,11 +55,19 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(holder.mImg);
+
         if (data.get(position).getName().equals(AppConstant.overlayCheckText)) {
             holder.overlay.setVisibility(View.VISIBLE);
         } else {
             holder.overlay.setVisibility(View.GONE);
         }
+
+        if (markedPos.contains(position)) {
+            holder.item_check.setVisibility(View.VISIBLE);
+        } else {
+            holder.item_check.setVisibility(View.GONE);
+        }
+
         holder.imageHolder.setTag(position);
         holder.imageHolder.setContentDescription(data.get(position).getName());
         holder.imageHolder.setOnLongClickListener(new View.OnLongClickListener() {
@@ -123,16 +129,19 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
         this.notifyDataSetChanged();
     }
 
+    public ArrayList<Integer> getMarkedPos() {
+        return markedPos;
+    }
+
     public interface Listener {
         void setEmptyList(boolean visibility);
     }
 
-    public ImageModel getItem(int position) {
-        return data.get(position);
-    }
 
-    public void updateData(ArrayList<ImageModel> newData) {
-        this.data = newData;
+    public void updateData(ArrayList<ImageModel> newData, ArrayList<Integer> markedPos) {
+        if (newData != null)
+            this.data = newData;
+        this.markedPos = markedPos;
     }
 
     public ArrayList<ImageModel> getData() {
@@ -198,16 +207,22 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
                         RecyclerView source = (RecyclerView) viewSource.getParent();
                         GalleryAdapter adapterSource = (GalleryAdapter) source.getAdapter();
                         positionSource = (int) viewSource.getTag();
-                        MyItemHolder momentImageView = (MyItemHolder) source.findViewHolderForAdapterPosition(positionSource);
-//                        momentImageView.item_check.setVisibility(View.VISIBLE);
 
                         ImageModel customList = adapterSource.getData().get(positionSource);
+                        ArrayList<Integer> currentSourceList = adapterSource.getMarkedPos();
 
                         GalleryAdapter adapterTarget = (GalleryAdapter) target.getAdapter();
                         ArrayList<ImageModel> customListTarget = adapterTarget.getData();
+
+                        if (!currentSourceList.contains(positionSource)) {
+                            currentSourceList.add(positionSource);
+                            adapterSource.updateData(null, currentSourceList);
+                            adapterSource.notifyDataSetChanged();
+                        }
+
                         if (!customListTarget.contains(customList)) {
                             customListTarget.add(customList);
-                            adapterTarget.updateData(customListTarget);
+                            adapterTarget.updateData(customListTarget, new ArrayList<Integer>());
                             adapterTarget.notifyDataSetChanged();
                         }
                         if (adapterTarget.getItemCount() < 1) {
@@ -228,11 +243,17 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
                         ImageModel imageToRemove = customListSource.get(positionSource);
                         RecyclerView momentView = (RecyclerView) v.getRootView().findViewById(R.id.momentsView);
                         GalleryAdapter momentAdapter = (GalleryAdapter) momentView.getAdapter();
-                        MyItemHolder momentImageView = (MyItemHolder) momentView.findViewHolderForAdapterPosition(momentAdapter.getData().indexOf(imageToRemove));
+                        int posToRemove = momentAdapter.getData().indexOf(imageToRemove);
+                        ArrayList<Integer> currentSourceList = momentAdapter.getMarkedPos();
 
-                        momentImageView.item_check.setVisibility(View.INVISIBLE);
+                        if (currentSourceList.contains(posToRemove)) {
+                            currentSourceList.remove(positionSource);
+                            momentAdapter.updateData(null, currentSourceList);
+                            momentAdapter.notifyDataSetChanged();
+                        }
+
                         customListSource.remove(positionSource);
-                        adapterSource.updateData(customListSource);
+                        adapterSource.updateData(customListSource, new ArrayList<Integer>());
                         adapterSource.notifyDataSetChanged();
                         if (adapterSource.getItemCount() < 1) {
                             mListener.setEmptyList(true);

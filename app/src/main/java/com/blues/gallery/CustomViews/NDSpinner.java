@@ -31,7 +31,7 @@ public class NDSpinner extends Spinner {
     setSelection(int position, boolean animate) {
         boolean sameSelected = position == getSelectedItemPosition();
         super.setSelection(position, animate);
-        if (sameSelected) {
+        if (sameSelected && position != 0) {
             // Spinner does not call the OnItemSelectedListener if the same item is selected, so do it manually now
             getOnItemSelectedListener().onItemSelected(this, getSelectedView(), position, getSelectedItemId());
         }
@@ -43,7 +43,7 @@ public class NDSpinner extends Spinner {
 
         boolean sameSelected = position == getSelectedItemPosition();
         super.setSelection(position);
-        if (sameSelected) {
+        if (sameSelected && position != 0) {
             // Spinner does not call the OnItemSelectedListener if the same item is selected, so do it manually now
             getOnItemSelectedListener().onItemSelected(this, getSelectedView(), position, getSelectedItemId());
         }
