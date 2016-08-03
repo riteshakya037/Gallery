@@ -1,8 +1,10 @@
 package com.blues.gallery.Helper;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.support.v7.app.AlertDialog;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -120,5 +122,14 @@ public class Utils {
 
     public static String getName(String filePath) {
         return (new File(filePath)).getName();
+    }
+
+    public float dpToPx(int i) {
+        Resources r = _context.getResources();
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, i, r.getDisplayMetrics());
+    }
+
+    public boolean checkJpegPlus(ImageModel imageModel) {
+        return imageModel.getName().equals(AppConstant.overlayCheckText);
     }
 }

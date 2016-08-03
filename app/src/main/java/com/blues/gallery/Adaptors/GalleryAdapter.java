@@ -12,7 +12,7 @@ import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.blues.gallery.Helper.AppConstant;
+import com.blues.gallery.Helper.Utils;
 import com.blues.gallery.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -29,12 +29,10 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
     private ArrayList<Integer> markedPos;
     private boolean smallerIcon = false;
     private Listener mListener;
+    Utils utils;
 
     public GalleryAdapter(Context context, ArrayList<ImageModel> data, ArrayList<Integer> markedPos, Listener listener) {
-        this.context = context;
-        this.data = data;
-        this.markedPos = markedPos;
-        this.mListener = listener;
+        this(context, data, markedPos, false, listener);
     }
 
     public GalleryAdapter(Context context, ArrayList<ImageModel> data, ArrayList<Integer> markedPos, boolean smallerIcon, Listener listener) {
@@ -43,6 +41,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
         this.markedPos = markedPos;
         this.smallerIcon = smallerIcon;
         this.mListener = listener;
+        utils = new Utils(context);
     }
 
 
@@ -55,7 +54,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
                     R.layout.image_list_small, parent, false);
             viewHolder = new MyItemHolder(v);
             return viewHolder;
-        }else {
+        } else {
             View v;
             v = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.image_list, parent, false);
@@ -73,7 +72,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(holder.mImg);
 
-        if (data.get(position).getName().equals(AppConstant.overlayCheckText)) {
+        if (utils.checkJpegPlus(data.get(position))) {
             holder.overlay.setVisibility(View.VISIBLE);
         } else {
             holder.overlay.setVisibility(View.GONE);

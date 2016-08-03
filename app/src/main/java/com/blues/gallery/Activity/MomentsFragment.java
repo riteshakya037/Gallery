@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -19,7 +18,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -38,10 +36,10 @@ import com.blues.gallery.Adaptors.GalleryAdapter;
 import com.blues.gallery.Adaptors.ImageModel;
 import com.blues.gallery.CustomViews.NDSpinner;
 import com.blues.gallery.EventHandlers.RecyclerItemClickListener;
-import com.blues.gallery.Helper.AppConstant;
 import com.blues.gallery.Helper.Utils;
 import com.blues.gallery.R;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -203,8 +201,14 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
 
                     @Override
                     public void onItemClick(View view, int position) {
-                        if (newData.get(position).getName().equals(AppConstant.overlayCheckText) && fragmentCheck) {
-                            Toast.makeText(getActivity(), "Test", Toast.LENGTH_SHORT).show();//todo
+                        Utils utils = new Utils(getActivity());
+                        if (utils.checkJpegPlus(newData.get(position)) && fragmentCheck) {
+                            if (appInstalledOrNot("com.speaktopic.selfieplus")) {
+                                Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage("com.speaktopic.selfieplus");
+                                File file = new File(newData.get(position).getUrl());
+//                                intent.setDataAndType(Uri.fromFile(file), "image/jpeg");
+                                startActivity(intent);
+                            }
                         } else {
                             Intent intent = new Intent(getContext(), CarouselActivity.class);
                             intent.putParcelableArrayListExtra("data", mAdapter.getData());
@@ -218,9 +222,8 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
     }
 
     private void initializeContainerRecyclerView() {
-        Resources r = getResources();
-        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, r.getDisplayMetrics());
         Utils utils = new Utils(getActivity());
+        float px = utils.dpToPx(100);
         GridLayoutManager gridLayoutManager;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
             gridLayoutManager = new GridLayoutManager(getActivity(), (int) (utils.getScreenWidth() / px - 1));
@@ -389,7 +392,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
     @Override
     public void setEmptyList(boolean visibility) {
         gallerySmall.setVisibility(visibility ? View.VISIBLE : View.INVISIBLE);
-        threeDotView.setClickable(!visibility);
+        threeDotView.setVisibility(!visibility ? View.VISIBLE : View.INVISIBLE);
     }
 
 

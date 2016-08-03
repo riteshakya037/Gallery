@@ -16,6 +16,7 @@
 
 package com.blues.gallery.Activity;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -28,6 +29,8 @@ import com.blues.gallery.Adaptors.ImageModel;
 import com.blues.gallery.Helper.Utils;
 import com.blues.gallery.R;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 
 public class ScreenSlidePageFragment extends Fragment {
@@ -68,17 +71,47 @@ public class ScreenSlidePageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Utils utils = new Utils(getActivity());
+        final Utils utils = new Utils(getActivity());
         // Inflate the layout containing a title and body text.
         ViewGroup rootView = (ViewGroup) inflater
                 .inflate(R.layout.fragment_screen_slide_page, container, false);
         ImageView imageView = (ImageView) rootView.findViewById(R.id.imageHolder);
+        imageView.setId(View.generateViewId());
+        final ImageView item_overlay = (ImageView) rootView.findViewById(R.id.item_overlay);
+
         Glide.with(getActivity()).load(mImage.getUrl()).asBitmap()
+                .listener(new RequestListener<String, Bitmap>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        if (utils.checkJpegPlus(mImage)) {
+                            item_overlay.setVisibility(View.VISIBLE);
+                        }
+                        return false;
+                    }
+                })
                 .into(imageView);
         RelativeLayout relativeLayout = (RelativeLayout) rootView.findViewById(R.id.vg_cover);
         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) relativeLayout.getLayoutParams();
         layoutParams.width = (int) (utils.getScreenWidth() * .6f);
         relativeLayout.setLayoutParams(layoutParams);
+
+        if (utils.checkJpegPlus(mImage)) {
+            layoutParams = new RelativeLayout.LayoutParams(
+                    (int) utils.dpToPx(48),
+                    (int) utils.dpToPx(48));
+            layoutParams.addRule(RelativeLayout.ALIGN_RIGHT, imageView.getId());        // <== THIS DOESN'T SEEM TO WORK
+            layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM, imageView.getId());
+            item_overlay.setLayoutParams(layoutParams);
+        } else {
+            item_overlay.setVisibility(View.GONE);
+        }
+
+
         return rootView;
     }
 

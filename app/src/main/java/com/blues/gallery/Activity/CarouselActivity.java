@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.blues.gallery.Adaptors.ImageModel;
 import com.blues.gallery.CustomViews.MultiViewPager;
 import com.blues.gallery.EventHandlers.ZoomOutPageTransformer;
-import com.blues.gallery.Helper.AppConstant;
 import com.blues.gallery.Helper.Utils;
 import com.blues.gallery.R;
 
@@ -48,11 +47,13 @@ public class CarouselActivity extends AppCompatActivity implements View.OnClickL
         pos = getIntent().getIntExtra("pos", 0);
         boolean overlayCheck = getIntent().getBooleanExtra("overlayCheck", false);
         ImageModel currentClicked = data.get(pos);
+
+        Utils utils = new Utils(this);
         if (overlayCheck) {
             Iterator<ImageModel> iterator = data.iterator();
             while (iterator.hasNext()) {
                 ImageModel next = iterator.next();
-                if (next.getName().equals(AppConstant.overlayCheckText)) {
+                if (utils.checkJpegPlus(next)) {
                     iterator.remove();
                 }
             }
