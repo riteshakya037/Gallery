@@ -9,9 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.blues.gallery.CustomViews.SquareFrameLayout;
 import com.blues.gallery.Helper.Utils;
 import com.blues.gallery.R;
 import com.bumptech.glide.Glide;
@@ -165,7 +165,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
     }
 
     public static class MyItemHolder extends RecyclerView.ViewHolder {
-        FrameLayout imageHolder;
+        SquareFrameLayout imageHolder;
         ImageView mImg;
         ImageView overlay;
         CheckBox item_check;
@@ -174,7 +174,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
             super(itemView);
             mImg = (ImageView) itemView.findViewById(R.id.item_img);
             overlay = (ImageView) itemView.findViewById(R.id.item_overlay);
-            imageHolder = (FrameLayout) itemView.findViewById(R.id.imageHolder);
+            imageHolder = (SquareFrameLayout) itemView.findViewById(R.id.imageHolder);
             item_check = (CheckBox) itemView.findViewById(R.id.item_check);
         }
 

@@ -41,7 +41,7 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/containerRecycle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="32dp"
@@ -54,9 +54,10 @@
                 android:id="@+id/gallerySmall"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/black"
                 android:gravity="center"
-                android:visibility="gone"
+                android:layout_marginBottom="32dp"
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp"
                 android:orientation="vertical">
 
 
