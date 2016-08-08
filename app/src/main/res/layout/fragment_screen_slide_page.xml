@@ -24,8 +24,8 @@
 
         <ImageView
             android:id="@+id/item_overlay"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_alignBottom="@id/imageHolder"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
