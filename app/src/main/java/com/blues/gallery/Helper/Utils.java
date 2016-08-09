@@ -9,6 +9,7 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.blues.gallery.Adaptors.ImageModel;
+import com.blues.gallery.MyNDK;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.Locale;
 public class Utils {
 
     private Context _context;
+    MyNDK myNDK = null;
 
     // constructor
     public Utils(Context context) {
@@ -130,6 +132,12 @@ public class Utils {
     }
 
     public boolean checkJpegPlus(ImageModel imageModel) {
-        return imageModel.getName().equals(AppConstant.overlayCheckText);
+//        return imageModel.getName().equals(AppConstant.overlayCheckText);
+        if (myNDK == null)
+            myNDK = new MyNDK();
+
+        int nSpotCount = myNDK.GetSpotCount(imageModel.getUrl());
+
+        return nSpotCount >= 0;
     }
 }
