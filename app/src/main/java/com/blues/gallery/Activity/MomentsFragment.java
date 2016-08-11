@@ -1,6 +1,7 @@
 package com.blues.gallery.Activity;
 
 import android.app.DatePickerDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -39,7 +40,6 @@ import com.blues.gallery.EventHandlers.RecyclerItemClickListener;
 import com.blues.gallery.Helper.Utils;
 import com.blues.gallery.R;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -172,7 +172,11 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
     }
 
     private void initializeSpinner() {
-        spinner.setVisibility(View.VISIBLE);
+        if (fragmentCheck) {
+            spinner.setVisibility(View.VISIBLE);
+        } else {
+            spinner.setVisibility(View.GONE);
+        }
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getActivity(),
                 R.layout.toolbar_spinner_item_actionbar, Arrays.asList(getResources().getStringArray(R.array.spinner_list_item_array)));
         dataAdapter.setDropDownViewResource(R.layout.toolbar_spinner_item_dropdown);
@@ -204,10 +208,24 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
                         Utils utils = new Utils(getActivity());
                         if (utils.checkJpegPlus(newData.get(position)) && fragmentCheck) {
                             if (appInstalledOrNot("com.speaktopic.selfieplus")) {
-                                Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage("com.speaktopic.selfieplus");
-                                File file = new File(newData.get(position).getUrl());
+//                                Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage("com.speaktopic.selfieplus.MainActivity");
+                                Intent intent = new Intent();
+                                intent.setComponent(new ComponentName("com.speaktopic.selfieplus", "com.speaktopic.selfieplus.MainActivity"));
+//                                File file = new File(newData.get(position).getUrl());
 //                                intent.setDataAndType(Uri.fromFile(file), "image/jpeg");
+                                intent.putExtra("ImagePath", newData.get(position).getUrl());
                                 startActivity(intent);
+                            } else if (appInstalledOrNot("com.speaktopic.picadd")) {
+                                Intent intent = new Intent();
+                                intent.setComponent(new ComponentName("com.speaktopic.picadd", "com.speaktopic.picadd.MainActivity"));
+                                intent.putExtra("ImagePath", newData.get(position).getUrl());
+                                startActivity(intent);
+                            } else {
+                                AlertDialog.Builder dlgAlert = new AlertDialog.Builder(getActivity());
+                                dlgAlert.setMessage("Selfie and PicAdd have not been installed.");
+                                dlgAlert.setTitle("Warning");
+                                dlgAlert.setPositiveButton("Ok", null);
+                                dlgAlert.create().show();
                             }
                         } else {
                             Intent intent = new Intent(getContext(), CarouselActivity.class);
