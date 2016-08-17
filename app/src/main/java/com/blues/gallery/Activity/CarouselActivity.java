@@ -48,12 +48,11 @@ public class CarouselActivity extends AppCompatActivity implements View.OnClickL
         boolean overlayCheck = getIntent().getBooleanExtra("overlayCheck", false);
         ImageModel currentClicked = data.get(pos);
 
-        Utils utils = new Utils(this);
         if (overlayCheck) {
             Iterator<ImageModel> iterator = data.iterator();
             while (iterator.hasNext()) {
                 ImageModel next = iterator.next();
-                if (utils.checkJpegPlus(next)) {
+                if (next.isCheckJpeg()) {
                     iterator.remove();
                 }
             }

@@ -205,8 +205,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
 
                     @Override
                     public void onItemClick(View view, int position) {
-                        Utils utils = new Utils(getActivity());
-                        if (utils.checkJpegPlus(newData.get(position)) && fragmentCheck) {
+                        if (newData.get(position).isCheckJpeg() && fragmentCheck) {
                             if (appInstalledOrNot("com.speaktopic.selfieplus")) {
 //                                Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage("com.speaktopic.selfieplus.MainActivity");
                                 Intent intent = new Intent();

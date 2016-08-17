@@ -88,7 +88,7 @@ public class ScreenSlidePageFragment extends Fragment {
 
                     @Override
                     public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        if (utils.checkJpegPlus(mImage)) {
+                        if (mImage.isCheckJpeg()) {
                             item_overlay.setVisibility(View.VISIBLE);
                         }
                         return false;
@@ -100,10 +100,10 @@ public class ScreenSlidePageFragment extends Fragment {
         layoutParams.width = (int) (utils.getScreenWidth() * .6f);
         relativeLayout.setLayoutParams(layoutParams);
 
-        if (utils.checkJpegPlus(mImage)) {
+        if (mImage.isCheckJpeg()) {
             layoutParams = new RelativeLayout.LayoutParams(
-                    (int) utils.dpToPx(48),
-                    (int) utils.dpToPx(48));
+                    (int) utils.dpToPx(24),
+                    (int) utils.dpToPx(24));
             layoutParams.addRule(RelativeLayout.ALIGN_RIGHT, imageView.getId());        // <== THIS DOESN'T SEEM TO WORK
             layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM, imageView.getId());
             item_overlay.setLayoutParams(layoutParams);
