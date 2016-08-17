@@ -1,6 +1,5 @@
 package com.blues.gallery.EventHandlers;
 
-import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -34,23 +33,25 @@ public class SpinnerInteractionListener implements AdapterView.OnItemSelectedLis
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         if (userSelect) {
-            String items = spinner.getSelectedItem().toString();
+            int items = spinner.getSelectedItemPosition();
             switch (items) {
-                case "ALL":
+                case 0:
                     resetInterface.resetForAll();
                     return;
-                case "DATE":
+                case 1:
                     new DialogCreate("Select Date", 1, customDialogInterface, new DialogCreate.DateOption());
                     resetInterface.resetLayout(1);
                     return;
-                case "LOCATION":
+                case 2:
                     new DialogCreate("Select Location", 0, customDialogInterface, new DialogCreate.TextOption());
                     resetInterface.resetLayout(2);
                     return;
-                case "EVENT":
+                case 3:
                     new DialogCreate("Select Event", 2, customDialogInterface, new DialogCreate.TextOption());
                     resetInterface.resetLayout(3);
-
+                case 4:
+                    new DialogCreate("Enter Keyword", 2, customDialogInterface, new DialogCreate.Database());
+                    resetInterface.resetLayout(3);
             }
             userSelect = false;
         }

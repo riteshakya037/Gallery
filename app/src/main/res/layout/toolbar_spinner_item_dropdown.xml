@@ -9,5 +9,5 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:textColor="#ffffffff"
-    android:textSize="16sp" />
+    android:textSize="14sp" />
 

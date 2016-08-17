@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.blues.gallery.Adaptors.GalleryAdapter;
 import com.blues.gallery.Adaptors.ImageModel;
+import com.blues.gallery.CustomViews.CustomDialogClass;
 import com.blues.gallery.CustomViews.NDSpinner;
 import com.blues.gallery.EventHandlers.CustomDialogInterface;
 import com.blues.gallery.EventHandlers.RecyclerItemClickListener;
@@ -279,7 +280,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.zip:
-                                Toast.makeText(getActivity(), "ZIP", Toast.LENGTH_SHORT).show();
+                                (new CustomDialogClass(getContext())).show();
                                 return true;
                             case R.id.add_keyword:
                                 Toast.makeText(getActivity(), "Add Keyword", Toast.LENGTH_SHORT).show();
@@ -333,12 +334,12 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
     }
 
 
-
     @Override
     public void setEmptyList(boolean visibility) {
         emptyListIndicator.setVisibility(visibility ? View.VISIBLE : View.INVISIBLE);
         threeDotView.setVisibility(!visibility ? View.VISIBLE : View.INVISIBLE);
         collection_title.setVisibility(!visibility ? View.VISIBLE : View.INVISIBLE);
+        collection_title.setText(!visibility ? "" : collection_title.getText());
         saveBtn.setVisibility(!visibility ? View.VISIBLE : View.INVISIBLE);
     }
 

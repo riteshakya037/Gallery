@@ -39,7 +39,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="32dp"
-                android:cursorVisible="false"
                 android:hint="Enter Title"
                 android:maxLines="1"
                 android:textColor="@android:color/white"
