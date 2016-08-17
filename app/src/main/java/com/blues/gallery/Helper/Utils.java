@@ -35,7 +35,7 @@ public class Utils {
 
         File directory = new File(
                 android.os.Environment.getExternalStorageDirectory()
-                        + File.separator /*+ AppConstant.PHOTO_ALBUM*/);
+                        + File.separator + AppConstant.PHOTO_ALBUM);
 
         // check for directory
         if (directory.isDirectory()) {
@@ -80,6 +80,7 @@ public class Utils {
         ImageModel imageModel = new ImageModel();
         imageModel.setName(directory.getName());
         imageModel.setUrl(directory.getAbsolutePath());
+        imageModel.checkJpeg();
         if (!filePaths.containsKey(directory.getParent())) {
             filePaths.put(directory.getParent(), new ArrayList<ImageModel>());
         }

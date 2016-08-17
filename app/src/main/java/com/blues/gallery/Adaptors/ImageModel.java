@@ -48,7 +48,10 @@ public class ImageModel implements Parcelable {
 
     public void setUrl(String url) {
         this.url = url;
-        checkJpegPlus(this);
+    }
+
+    public void setCheckJpeg(boolean checkJpeg) {
+        this.checkJpeg = checkJpeg;
     }
 
     public boolean isCheckJpeg() {
@@ -74,5 +77,9 @@ public class ImageModel implements Parcelable {
         int nSpotCount = myNDK.GetSpotCount(imageModel.getUrl());
 
         checkJpeg = nSpotCount >= 0;
+    }
+
+    public void checkJpeg() {
+        checkJpegPlus(this);
     }
 }
