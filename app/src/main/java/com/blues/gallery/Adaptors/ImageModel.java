@@ -10,6 +10,7 @@ public class ImageModel implements Parcelable {
 
     private String name, url;
     private boolean checkJpeg;
+    static MyNDK myNDK;
 
     public ImageModel() {
 
@@ -66,9 +67,10 @@ public class ImageModel implements Parcelable {
         dest.writeString(String.valueOf(checkJpeg));
     }
 
-    public void checkJpegPlus(ImageModel imageModel) {
+    private void checkJpegPlus(ImageModel imageModel) {
 //        return imageModel.getName().equals(AppConstant.overlayCheckText);
-        MyNDK myNDK = new MyNDK();
+        if (myNDK == null)
+            myNDK = new MyNDK();
         int nSpotCount = myNDK.GetSpotCount(imageModel.getUrl());
 
         checkJpeg = nSpotCount >= 0;

@@ -16,4 +16,6 @@
     <string name="share">Share</string>
     <string name="add_keyword">Add Keyword</string>
     <string name="zip">Zip</string>
+    <string name="save">Save</string>
+    <string name="clear_all">Clear All</string>
 </resources>

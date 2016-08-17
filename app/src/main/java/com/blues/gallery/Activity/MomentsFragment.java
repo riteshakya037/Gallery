@@ -1,9 +1,7 @@
 package com.blues.gallery.Activity;
 
-import android.app.DatePickerDialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -22,12 +20,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,25 +32,25 @@ import android.widget.Toast;
 import com.blues.gallery.Adaptors.GalleryAdapter;
 import com.blues.gallery.Adaptors.ImageModel;
 import com.blues.gallery.CustomViews.NDSpinner;
+import com.blues.gallery.EventHandlers.CustomDialogInterface;
 import com.blues.gallery.EventHandlers.RecyclerItemClickListener;
+import com.blues.gallery.EventHandlers.ResetInterface;
+import com.blues.gallery.EventHandlers.SpinnerInteractionListener;
 import com.blues.gallery.Helper.Utils;
 import com.blues.gallery.R;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Locale;
 
 import static com.blues.gallery.Activity.DummyActivity.IMGS;
 
 
-public class MomentsFragment extends Fragment implements GalleryAdapter.Listener {
+public class MomentsFragment extends Fragment implements GalleryAdapter.Listener, ResetInterface, CustomDialogInterface {
     GalleryAdapter mAdapter;
     RecyclerView mRecyclerView;
     RecyclerView containerRecycle;
-    GalleryAdapter galleryAdapter;
-    LinearLayout gallerySmall;
+    GalleryAdapter containerAdapter;
+    LinearLayout emptyListIndicator;
     ImageView dumpSpace;
     LinearLayout containerView;
     LinearLayoutManager linearLayoutManager;
@@ -73,6 +69,8 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
     private NDSpinner spinner;
 
     private ArrayList<ImageModel> newData;
+    private EditText collection_title;
+    private Button saveBtn;
 
     public MomentsFragment() {
         // Required empty public constructor
@@ -129,7 +127,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
     public void onPause() {
         super.onPause();
         posScrolled = linearLayoutManager.onSaveInstanceState();
-        containerData = galleryAdapter.getData();
+        containerData = containerAdapter.getData();
         currentSourceList = mAdapter.getMarkedPos();
     }
 
@@ -153,7 +151,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         initializeSmallGalleryButton();
         initializeDump();
         initializeThreeDotView();
-        if (fragmentCheck && currentActive == 0) {
+        if (currentActive == 0) {
             containerView.setVisibility(View.VISIBLE);
         } else {
             containerView.setVisibility(View.GONE);
@@ -165,10 +163,12 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         spinner = (NDSpinner) toolbar.findViewById(R.id.spinner_nav);
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.momentsView);
         containerRecycle = (RecyclerView) layout.findViewById(R.id.containerRecycle);
-        gallerySmall = (LinearLayout) layout.findViewById(R.id.gallerySmall);
+        emptyListIndicator = (LinearLayout) layout.findViewById(R.id.gallerySmall);
         dumpSpace = (ImageView) layout.findViewById(R.id.dumpLocation);
         containerView = (LinearLayout) layout.findViewById(R.id.container);
         threeDotView = (ImageView) layout.findViewById(R.id.threeDotView);
+        collection_title = (EditText) layout.findViewById(R.id.collection_title);
+        saveBtn = (Button) layout.findViewById(R.id.saveBtn);
     }
 
     private void initializeSpinner() {
@@ -182,7 +182,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         dataAdapter.setDropDownViewResource(R.layout.toolbar_spinner_item_dropdown);
         spinner.setAdapter(dataAdapter);
 
-        SpinnerInteractionListener listener = new SpinnerInteractionListener();
+        SpinnerInteractionListener listener = new SpinnerInteractionListener(this);
         spinner.setOnTouchListener(listener);
 
         spinner.setOnItemSelectedListener(listener);
@@ -207,11 +207,8 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
                     public void onItemClick(View view, int position) {
                         if (newData.get(position).isCheckJpeg() && fragmentCheck) {
                             if (appInstalledOrNot("com.speaktopic.selfieplus")) {
-//                                Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage("com.speaktopic.selfieplus.MainActivity");
                                 Intent intent = new Intent();
                                 intent.setComponent(new ComponentName("com.speaktopic.selfieplus", "com.speaktopic.selfieplus.MainActivity"));
-//                                File file = new File(newData.get(position).getUrl());
-//                                intent.setDataAndType(Uri.fromFile(file), "image/jpeg");
                                 intent.putExtra("ImagePath", newData.get(position).getUrl());
                                 startActivity(intent);
                             } else if (appInstalledOrNot("com.speaktopic.picadd")) {
@@ -249,9 +246,9 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         gridLayoutManager.setAutoMeasureEnabled(true);
         containerRecycle.setLayoutManager(gridLayoutManager);
         containerRecycle.setHasFixedSize(true);
-        galleryAdapter = new GalleryAdapter(getActivity(), containerData, new ArrayList<Integer>(), true, this);
-        containerRecycle.setAdapter(galleryAdapter);
-        containerRecycle.setOnDragListener(galleryAdapter.getDragInstance());
+        containerAdapter = new GalleryAdapter(getActivity(), containerData, new ArrayList<Integer>(), true, this);
+        containerRecycle.setAdapter(containerAdapter);
+        containerRecycle.setOnDragListener(containerAdapter.getDragInstance());
         if (containerData.size() > 0) {
             setEmptyList(false);
         } else {
@@ -260,13 +257,13 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
     }
 
     private void initializeDump() {
-        dumpSpace.setOnDragListener(galleryAdapter.getDragInstance());
-        containerView.setOnDragListener(galleryAdapter.getDragInstance());
-        mRecyclerView.setOnDragListener(galleryAdapter.getDragInstance());
+        dumpSpace.setOnDragListener(containerAdapter.getDragInstance());
+        containerView.setOnDragListener(containerAdapter.getDragInstance());
+        mRecyclerView.setOnDragListener(containerAdapter.getDragInstance());
     }
 
     private void initializeSmallGalleryButton() {
-        gallerySmall.setOnDragListener(galleryAdapter.getDragInstance());
+        emptyListIndicator.setOnDragListener(containerAdapter.getDragInstance());
     }
 
     private void initializeThreeDotView() {
@@ -289,6 +286,12 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
                                 return true;
                             case R.id.share:
                                 Toast.makeText(getActivity(), "Share", Toast.LENGTH_SHORT).show();
+                                return true;
+                            case R.id.clear:
+                                mAdapter.updateData(null, new ArrayList<Integer>());
+                                mAdapter.notifyDataSetChanged();
+                                containerAdapter.clearData();
+                                setEmptyList(true);
                                 return true;
                             default:
                                 return false;
@@ -330,132 +333,17 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
     }
 
 
-    private void createDatePicker(String title, final int pos) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(title);
-        final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd", Locale.US);
-
-        final EditText input = new EditText(getActivity());
-        input.setFocusable(false);
-        Calendar newCalendar = Calendar.getInstance();
-        final DatePickerDialog fromDatePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
-
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
-                input.setText(dateFormatter.format(newDate.getTime()));
-            }
-
-        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
-        input.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fromDatePickerDialog.show();
-            }
-        });
-        builder.setView(input);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                newData = new ArrayList<>();
-                for (ImageModel imageModel : data) {
-                    String[] propSplit = imageModel.getName().split("_");
-                    if (propSplit.length == 3) {
-                        if (propSplit[pos].equalsIgnoreCase(input.getText().toString())) {
-                            newData.add(imageModel);
-                        }
-                    } else if (imageModel.getName().contains(input.getText().toString()))
-                        newData.add(imageModel);
-
-                }
-                mAdapter.updateData(newData, new ArrayList<Integer>());
-                mAdapter.notifyDataSetChanged();
-                mRecyclerView.scrollToPosition(0);
-            }
-        });
-        builder.setCancelable(false);
-        builder.show();
-
-    }
-
-    private void createTextDialog(String title, final int pos) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(title);
-        final EditText input = new EditText(getActivity());
-        builder.setView(input);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                newData = new ArrayList<>();
-                for (ImageModel imageModel : data) {
-                    String[] propSplit = imageModel.getName().split("_");
-                    if (propSplit.length == 3) {
-                        if (propSplit[pos].equalsIgnoreCase(input.getText().toString())) {
-                            newData.add(imageModel);
-                        }
-                    } else if (imageModel.getName().contains(input.getText().toString()))
-                        newData.add(imageModel);
-
-                }
-                mAdapter.updateData(newData, new ArrayList<Integer>());
-                mAdapter.notifyDataSetChanged();
-                mRecyclerView.scrollToPosition(0);
-            }
-        });
-        builder.setCancelable(false);
-        builder.show();
-    }
 
     @Override
     public void setEmptyList(boolean visibility) {
-        gallerySmall.setVisibility(visibility ? View.VISIBLE : View.INVISIBLE);
+        emptyListIndicator.setVisibility(visibility ? View.VISIBLE : View.INVISIBLE);
         threeDotView.setVisibility(!visibility ? View.VISIBLE : View.INVISIBLE);
+        collection_title.setVisibility(!visibility ? View.VISIBLE : View.INVISIBLE);
+        saveBtn.setVisibility(!visibility ? View.VISIBLE : View.INVISIBLE);
     }
 
 
-    public class SpinnerInteractionListener implements AdapterView.OnItemSelectedListener, View.OnTouchListener {
-
-        boolean userSelect = false;
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            userSelect = true;
-            return false;
-        }
-
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            if (userSelect) {
-                String items = spinner.getSelectedItem().toString();
-                switch (items) {
-                    case "ALL":
-                        resetForAll();
-                        return;
-                    case "DATE":
-                        createDatePicker("Select Date", 1);
-                        resetLayout(1);
-                        return;
-                    case "LOCATION":
-                        createTextDialog("Select Location", 0);
-                        resetLayout(2);
-                        return;
-                    case "EVENT":
-                        createTextDialog("Select Event", 2);
-                        resetLayout(3);
-
-                }
-                userSelect = false;
-            }
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> adapterView) {
-
-        }
-
-    }
-
-    private void resetForAll() {
+    public void resetForAll() {
         newData = data;
         mAdapter.updateData(newData, currentSourceList);
         mAdapter.notifyDataSetChanged();
@@ -470,16 +358,32 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
             mRecyclerView.setLayoutManager(linearLayoutManager);
         }
         currentActive = 0;
-
     }
 
-    private void resetLayout(int i) {
+    public void resetLayout(int i) {
         containerView.setVisibility(View.GONE);
-        galleryAdapter.clearData();
+        containerAdapter.clearData();
         currentActive = i;
         currentSourceList = new ArrayList<>();
         linearLayoutManager = (new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         mRecyclerView.setLayoutManager(linearLayoutManager);
+    }
+
+    @Override
+    public void UpdateDone(ArrayList<ImageModel> data, int pos) {
+        newData = data;
+        mAdapter.updateData(newData, new ArrayList<Integer>());
+        mAdapter.notifyDataSetChanged();
+        mRecyclerView.scrollToPosition(0);
+    }
+
+    @Override
+    public ArrayList<ImageModel> getData() {
+        return data;
+    }
+
+    public NDSpinner getSpinner() {
+        return spinner;
     }
 
     /**
