@@ -1,7 +1,6 @@
 package com.blues.gallery.EventHandlers;
 
-import android.content.Context;
-import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 
 import com.blues.gallery.Adaptors.ImageModel;
 
@@ -12,7 +11,7 @@ import java.util.ArrayList;
  */
 
 public interface RunOption {
-    void additionalOption(EditText editText, CustomDialogInterface context, int pos);
+    void additionalOption(AutoCompleteTextView editText, CustomDialogInterface context, int pos);
 
     ArrayList<ImageModel> getData();
 }

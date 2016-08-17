@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.blues.gallery.CustomViews.SquareFrameLayout;
@@ -90,7 +91,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
                     }
                 })
                 .into(holder.mImg);
-
 
 
         if (markedPos.contains(position)) {
@@ -207,8 +207,10 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
         @Override
         public boolean onDrag(View v, DragEvent event) {
             int action = event.getAction();
+            EditText editText = (EditText) v.getRootView().findViewById(R.id.collection_title);
             switch (action) {
                 case DragEvent.ACTION_DRAG_STARTED:
+                    editText.setCursorVisible(false);
                     break;
 
                 case DragEvent.ACTION_DRAG_ENTERED:
@@ -298,7 +300,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
                     break;
 
                 case DragEvent.ACTION_DRAG_ENDED:
-                    //v.setBackgroundColor(0);
+                    editText.setCursorVisible(true);
                     break;
 
                 default:

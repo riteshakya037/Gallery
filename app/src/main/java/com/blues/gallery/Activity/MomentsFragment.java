@@ -1,5 +1,6 @@
 package com.blues.gallery.Activity;
 
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +38,7 @@ import com.blues.gallery.EventHandlers.CustomDialogInterface;
 import com.blues.gallery.EventHandlers.RecyclerItemClickListener;
 import com.blues.gallery.EventHandlers.ResetInterface;
 import com.blues.gallery.EventHandlers.SpinnerInteractionListener;
+import com.blues.gallery.Helper.DatabaseContract;
 import com.blues.gallery.Helper.Utils;
 import com.blues.gallery.R;
 
@@ -152,6 +154,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         initializeSmallGalleryButton();
         initializeDump();
         initializeThreeDotView();
+        initializeSaveButton();
         if (currentActive == 0) {
             containerView.setVisibility(View.VISIBLE);
         } else {
@@ -302,6 +305,28 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
                 popup.show();
             }
         });
+    }
+
+
+    private void initializeSaveButton() {
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (collection_title.getText().toString().matches("")) {
+                    AlertDialog.Builder dlgAlert = new AlertDialog.Builder(getActivity());
+                    dlgAlert.setMessage("Please enter a title for Collection");
+                    dlgAlert.setPositiveButton("Ok", null);
+                    dlgAlert.create().show();
+                } else {
+                    ProgressDialog dialog = ProgressDialog.show(getContext(), "",
+                            "Writing. Please wait...", true, false);
+                    DatabaseContract.DbHelper insertFiles = new DatabaseContract.DbHelper(getContext());
+                    insertFiles.onInsert(containerAdapter.getData(), collection_title.getText().toString());
+                    dialog.dismiss();
+                }
+            }
+        });
+
     }
 
     private boolean appInstalledOrNot(String uri) {

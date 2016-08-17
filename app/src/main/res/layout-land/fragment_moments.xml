@@ -42,8 +42,9 @@
                 android:cursorVisible="false"
                 android:hint="Enter Title"
                 android:maxLines="1"
+                android:singleLine="true"
                 android:textColor="@android:color/white"
-                android:textColorHint="@android:color/white"
+                android:textColorHint="@android:color/darker_gray"
                 android:theme="@style/TextViewTheme" />
         </LinearLayout>
 

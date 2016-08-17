@@ -1,13 +1,21 @@
 package com.blues.gallery.EventHandlers;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.blues.gallery.Adaptors.ImageModel;
+import com.blues.gallery.Helper.DatabaseContract;
+import com.blues.gallery.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,7 +30,19 @@ public class DialogCreate {
     public DialogCreate(String title, final int pos, final CustomDialogInterface customDialogInterface, final RunOption runOption) {
         AlertDialog.Builder builder = new AlertDialog.Builder(customDialogInterface.getContext());
         builder.setTitle(title);
-        final EditText input = new EditText(customDialogInterface.getContext());
+        final AutoCompleteTextView input = new AutoCompleteTextView(customDialogInterface.getContext());
+        input.setSingleLine(true);
+        input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    customDialogInterface.UpdateDone(runOption.getData(), pos);
+                    handled = true;
+                }
+                return handled;
+            }
+        });
         runOption.additionalOption(input, customDialogInterface, pos);
         builder.setView(input);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -41,7 +61,7 @@ public class DialogCreate {
         private int pos;
 
         @Override
-        public void additionalOption(final EditText input, CustomDialogInterface context, int pos) {
+        public void additionalOption(final AutoCompleteTextView input, CustomDialogInterface context, int pos) {
             this.input = input;
             this.customDialogInterface = context;
             this.pos = pos;
@@ -88,7 +108,7 @@ public class DialogCreate {
         private int pos;
 
         @Override
-        public void additionalOption(final EditText input, CustomDialogInterface customDialogInterface, int pos) {
+        public void additionalOption(final AutoCompleteTextView input, CustomDialogInterface customDialogInterface, int pos) {
             this.input = input;
             this.customDialogInterface = customDialogInterface;
             this.pos = pos;
@@ -113,19 +133,26 @@ public class DialogCreate {
     public static class Database implements RunOption {
         private EditText input;
         private CustomDialogInterface customDialogInterface;
-        private int pos;
 
         @Override
-        public void additionalOption(final EditText input, CustomDialogInterface customDialogInterface, int pos) {
+        public void additionalOption(final AutoCompleteTextView input, CustomDialogInterface customDialogInterface, int pos) {
             this.input = input;
             this.customDialogInterface = customDialogInterface;
-            this.pos = pos;
+            DatabaseContract.DbHelper dbHelper = new DatabaseContract.DbHelper(customDialogInterface.getContext());
+            String[] languages = dbHelper.getTitles();
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(customDialogInterface.getContext(), R.layout.datase_search_dropdown, languages);
+            input.setAdapter(adapter);
+            input.setThreshold(1);
         }
 
         @Override
         public ArrayList<ImageModel> getData() {
-            ArrayList<ImageModel> newData = new ArrayList<>();
-            //// TODO: 8/17/2016 DatabaseConnection
+            ArrayList<ImageModel> newData;
+            ProgressDialog dialog = ProgressDialog.show(customDialogInterface.getContext(), "",
+                    "Writing. Please wait...", true, false);
+            DatabaseContract.DbHelper selectFiles = new DatabaseContract.DbHelper(customDialogInterface.getContext());
+            newData = selectFiles.onSelect(input.getText().toString());
+            dialog.dismiss();
             return newData;
         }
     }

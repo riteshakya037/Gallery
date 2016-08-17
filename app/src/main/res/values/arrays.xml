@@ -5,6 +5,6 @@
         <item>DATE</item>
         <item>LOCATION</item>
         <item>EVENT</item>
-        <item>COLLECTION TITLE</item>
+        <item>COLLECTION</item>
     </string-array>
 </resources>
