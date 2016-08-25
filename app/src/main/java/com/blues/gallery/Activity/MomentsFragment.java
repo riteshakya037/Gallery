@@ -23,6 +23,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -172,6 +174,13 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         containerView = (LinearLayout) layout.findViewById(R.id.container);
         threeDotView = (ImageView) layout.findViewById(R.id.threeDotView);
         collection_title = (EditText) layout.findViewById(R.id.collection_title);
+        collection_title.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        collection_title.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               collection_title.setCursorVisible(true);
+            }
+        });
         saveBtn = (Button) layout.findViewById(R.id.saveBtn);
     }
 

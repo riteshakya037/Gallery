@@ -300,7 +300,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyItemHo
                     break;
 
                 case DragEvent.ACTION_DRAG_ENDED:
-                    editText.setCursorVisible(true);
                     break;
 
                 default:
