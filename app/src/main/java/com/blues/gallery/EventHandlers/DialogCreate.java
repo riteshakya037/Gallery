@@ -32,17 +32,7 @@ public class DialogCreate {
         builder.setTitle(title);
         final AutoCompleteTextView input = new AutoCompleteTextView(customDialogInterface.getContext());
         input.setSingleLine(true);
-        input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    customDialogInterface.UpdateDone(runOption.getData(), pos);
-                    handled = true;
-                }
-                return handled;
-            }
-        });
+        input.setImeOptions(EditorInfo.IME_ACTION_DONE);
         runOption.additionalOption(input, customDialogInterface, pos);
         builder.setView(input);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
