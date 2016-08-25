@@ -51,7 +51,7 @@ public class SpinnerInteractionListener implements AdapterView.OnItemSelectedLis
                     resetInterface.resetLayout(3);
                 case 4:
                     new DialogCreate("Enter Keyword", 2, customDialogInterface, new DialogCreate.Database());
-                    resetInterface.resetLayout(3);
+                    resetInterface.resetLayout(4);
             }
             userSelect = false;
         }

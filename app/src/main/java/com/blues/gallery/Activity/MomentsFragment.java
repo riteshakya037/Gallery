@@ -24,7 +24,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -109,6 +108,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         super.onSaveInstanceState(outState);
         outState.putBoolean("fragmentCheck", fragmentCheck);
         outState.putParcelableArrayList("data", data);
+        outState.putParcelableArrayList("newData", newData);
         outState.putParcelableArrayList("containerData", containerData);
         outState.putInt("currentActive", currentActive);
         outState.putParcelable("posScrolled", posScrolled);
@@ -121,6 +121,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         if (savedInstanceState != null) {
             fragmentCheck = savedInstanceState.getBoolean("fragmentCheck", false);
             data = savedInstanceState.getParcelableArrayList("data");
+            newData = savedInstanceState.getParcelableArrayList("newData");
             containerData = savedInstanceState.getParcelableArrayList("containerData");
             currentActive = savedInstanceState.getInt("currentActive", currentActive);
             posScrolled = savedInstanceState.getParcelable("posScrolled");
@@ -178,7 +179,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         collection_title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               collection_title.setCursorVisible(true);
+                collection_title.setCursorVisible(true);
             }
         });
         saveBtn = (Button) layout.findViewById(R.id.saveBtn);
@@ -199,6 +200,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
         spinner.setOnTouchListener(listener);
 
         spinner.setOnItemSelectedListener(listener);
+        spinner.setSelection(currentActive);
     }
 
     private void initializeRecyclerView() {
@@ -208,7 +210,7 @@ public class MomentsFragment extends Fragment implements GalleryAdapter.Listener
             linearLayoutManager = (new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setHasFixedSize(true);
-        mAdapter = new GalleryAdapter(getActivity(), data, currentSourceList, this);
+        mAdapter = new GalleryAdapter(getActivity(), newData == null ? data : newData, currentSourceList, this);
         mRecyclerView.setAdapter(mAdapter);
         if (posScrolled != null) {
             linearLayoutManager.onRestoreInstanceState(posScrolled);
