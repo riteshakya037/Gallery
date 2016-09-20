@@ -136,12 +136,12 @@ public class DialogCreate {
             for (ImageModel imageModel : customDialogInterface.getData()) {
                 switch (pos) {
                     case 0://Location
-                        if (imageModel.isCheckJpeg() && imageModel.getJpegPlusLocationTag().equalsIgnoreCase(input.getText().toString())) {
+                        if (imageModel.isCheckJpeg() && !imageModel.getJpegPlusLocationTag().equals("") && imageModel.getJpegPlusLocationTag().equalsIgnoreCase(input.getText().toString())) {
                             newData.add(imageModel);
                         }
                         break;
                     case 2://Event
-                        if (imageModel.isCheckJpeg() && imageModel.getJpegPlusEventTag().equalsIgnoreCase(input.getText().toString())) {
+                        if (imageModel.isCheckJpeg() && !imageModel.getJpegPlusEventTag().equals("") && imageModel.getJpegPlusEventTag().equalsIgnoreCase(input.getText().toString())) {
                             newData.add(imageModel);
                         }
                         break;
