@@ -4,14 +4,12 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.blues.gallery.Adaptors.ImageModel;
 import com.blues.gallery.Helper.DatabaseContract;
@@ -92,33 +90,6 @@ public class DialogCreate {
         }
     }
 
-    public static class TextOption implements RunOption {
-        private EditText input;
-        private CustomDialogInterface customDialogInterface;
-        private int pos;
-
-        @Override
-        public void additionalOption(final AutoCompleteTextView input, CustomDialogInterface customDialogInterface, int pos) {
-            this.input = input;
-            this.customDialogInterface = customDialogInterface;
-            this.pos = pos;
-        }
-
-        @Override
-        public ArrayList<ImageModel> getData() {
-            ArrayList<ImageModel> newData = new ArrayList<>();
-            for (ImageModel imageModel : customDialogInterface.getData()) {
-                String[] propSplit = imageModel.getName().split("_");
-                if (propSplit.length == 3) {
-                    if (propSplit[pos].equalsIgnoreCase(input.getText().toString())) {
-                        newData.add(imageModel);
-                    }
-                } else if (imageModel.getName().contains(input.getText().toString()))
-                    newData.add(imageModel);
-            }
-            return newData;
-        }
-    }
 
     public static class Database implements RunOption {
         private EditText input;
@@ -143,6 +114,39 @@ public class DialogCreate {
             DatabaseContract.DbHelper selectFiles = new DatabaseContract.DbHelper(customDialogInterface.getContext());
             newData = selectFiles.onSelect(input.getText().toString());
             dialog.dismiss();
+            return newData;
+        }
+    }
+
+    static class TagOption implements RunOption {
+        private EditText input;
+        private CustomDialogInterface customDialogInterface;
+        private int pos;
+
+        @Override
+        public void additionalOption(AutoCompleteTextView input, CustomDialogInterface customDialogInterface, int pos) {
+            this.input = input;
+            this.customDialogInterface = customDialogInterface;
+            this.pos = pos;
+        }
+
+        @Override
+        public ArrayList<ImageModel> getData() {
+            ArrayList<ImageModel> newData = new ArrayList<>();
+            for (ImageModel imageModel : customDialogInterface.getData()) {
+                switch (pos) {
+                    case 0://Location
+                        if (imageModel.isCheckJpeg() && imageModel.getJpegPlusLocationTag().equalsIgnoreCase(input.getText().toString())) {
+                            newData.add(imageModel);
+                        }
+                        break;
+                    case 2://Event
+                        if (imageModel.isCheckJpeg() && imageModel.getJpegPlusEventTag().equalsIgnoreCase(input.getText().toString())) {
+                            newData.add(imageModel);
+                        }
+                        break;
+                }
+            }
             return newData;
         }
     }

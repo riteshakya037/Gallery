@@ -37,18 +37,19 @@ public class SpinnerInteractionListener implements AdapterView.OnItemSelectedLis
             switch (items) {
                 case 0:
                     resetInterface.resetForAll();
-                    return;
+                    break;
                 case 1:
                     new DialogCreate("Select Date", 1, customDialogInterface, new DialogCreate.DateOption());
                     resetInterface.resetLayout(1);
-                    return;
+                    break;
                 case 2:
-                    new DialogCreate("Select Location", 0, customDialogInterface, new DialogCreate.TextOption());
+                    new DialogCreate("Select Location", 0, customDialogInterface, new DialogCreate.TagOption());
                     resetInterface.resetLayout(2);
-                    return;
+                    break;
                 case 3:
-                    new DialogCreate("Select Event", 2, customDialogInterface, new DialogCreate.TextOption());
+                    new DialogCreate("Select Event", 2, customDialogInterface, new DialogCreate.TagOption());
                     resetInterface.resetLayout(3);
+                    break;
                 case 4:
                     new DialogCreate("Enter Keyword", 2, customDialogInterface, new DialogCreate.Database());
                     resetInterface.resetLayout(4);

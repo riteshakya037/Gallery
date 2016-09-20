@@ -10,6 +10,8 @@ public class ImageModel implements Parcelable {
 
     private String name, url;
     private boolean checkJpeg;
+    private String jpegPlusEventTag;
+    private String jpegPlusLocationTag;
     static MyNDK myNDK;
 
     public ImageModel() {
@@ -19,7 +21,21 @@ public class ImageModel implements Parcelable {
     protected ImageModel(Parcel in) {
         name = in.readString();
         url = in.readString();
-        checkJpeg = Boolean.parseBoolean(in.readString());
+        checkJpeg = in.readByte() != 0;
+        jpegPlusEventTag = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(url);
+        dest.writeByte((byte) (checkJpeg ? 1 : 0));
+        dest.writeString(jpegPlusEventTag);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<ImageModel> CREATOR = new Creator<ImageModel>() {
@@ -58,16 +74,21 @@ public class ImageModel implements Parcelable {
         return checkJpeg;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+
+    public String getJpegPlusEventTag() {
+        return jpegPlusEventTag;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
-        dest.writeString(url);
-        dest.writeString(String.valueOf(checkJpeg));
+    public void setJpegPlusEventTag(String jpegPlusEventTag) {
+        this.jpegPlusEventTag = jpegPlusEventTag;
+    }
+
+    public String getJpegPlusLocationTag() {
+        return jpegPlusLocationTag;
+    }
+
+    public void setJpegPlusLocationTag(String jpegPlusLocationTag) {
+        this.jpegPlusLocationTag = jpegPlusLocationTag;
     }
 
     private void checkJpegPlus(ImageModel imageModel) {
@@ -77,6 +98,10 @@ public class ImageModel implements Parcelable {
         int nSpotCount = myNDK.GetSpotCount(imageModel.getUrl());
 
         checkJpeg = nSpotCount >= 0;
+        if (checkJpeg) {
+            setJpegPlusEventTag(myNDK.GetMoment(imageModel.getUrl(), "event"));
+            setJpegPlusLocationTag(myNDK.GetMoment(imageModel.getUrl(), "location"));
+        }
     }
 
     public void checkJpeg() {
